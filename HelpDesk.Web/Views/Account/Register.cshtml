@@ -1,6 +1,7 @@
-﻿@model HelpDesk.Models.ViewModels.LoginVM
+﻿@model HelpDesk.Models.ViewModels.RegisterVM
 
 @{
+    ViewBag.Title = "Kayıt Ol";
     Layout = null;
 }
 
@@ -15,7 +16,7 @@
     <meta name="author" content="skcats">
     <!-- The above 6 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <!-- Title -->
-    <title>Giriş</title>
+    <title>Yeni Kullanıcı</title>
 
     <!-- Styles -->
     <link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
@@ -37,6 +38,7 @@
     <![endif]-->
 </head>
 <body>
+
     <!-- Page Container -->
     <div class="page-container">
         <!-- Page Inner -->
@@ -47,20 +49,37 @@
                         <br />
                         <br />
                         <br />
-                        <br />
-                        <br />
-                        <h4 class="login-title">Hesabınıza Giriş Yapın</h4>
-                        <form asp-controller="Account" asp-action="Login" method="post">
-
-                            <h4 style="color: forestgreen">@TempData["Message1"]</h4>
-                            <h4 style="color: darkred">@TempData["Message2"]</h4>
+                        <h4 class="login-title">Yeni Hesap Oluştur</h4>
+                        <form asp-controller="Account" asp-action="Register" method="post">
                             <div class="form-horizontal">
                                 <hr />
                                 <div asp-validation-summary="All" class="text-danger"></div>
                                 <div class="form-group">
                                     <div class="col-md-8 col-md-offset-2">
+                                        <label asp-for="Name">Adı</label>
+                                        <input type="text" asp-for="Name" class="form-control input-rounded" />
+
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="col-md-8 col-md-offset-2">
+                                        <label asp-for="Surname">Soyadı</label>
+                                        <input type="text" asp-for="Surname" class="form-control input-rounded" />
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="col-md-8 col-md-offset-2">
                                         <label asp-for="UserName">Kullanıcı Adı</label>
                                         <input type="text" asp-for="UserName" class="form-control input-rounded" />
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="col-md-8 col-md-offset-2">
+                                        <label asp-for="Email">Mail Adresi</label>
+                                        <input type="email" asp-for="Email" class="form-control input-rounded" />
                                     </div>
                                 </div>
 
@@ -72,38 +91,45 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <div class="col-md-6 col-md-offset-2">
-                                        <input type="checkbox" asp-for="RememberMe" class="checkbox" />Beni Hatırla
+                                    <div class="col-md-8 col-md-offset-2">
+                                        <label asp-for="ConfirmPassword">Şifre Tekrar</label>
+                                        <input type="password" asp-for="ConfirmPassword" class="form-control input-rounded" />
                                     </div>
                                 </div>
-                                <br /><br />
+
                                 <div class="form-group">
-                                    <div class="col-md-10 col-md-offset-1">
-                                        <input type="submit" value="Giriş Yap" class="btn btn-block btn-instagram" />
+                                    <div class="col-md-8 col-md-offset-2">
+                                        @*@Html.EnumDropDownListFor(model => model.Location, new { @class = "form-control input-rounded", @placeholder = "Konum" })
+                        @Html.ValidationMessageFor(model => model.Location, "", new { @class = "text-danger" })*@
+                                    </div>
+                                </div>
 
-                                        <a asp-controller="Account" asp-action="Register" class="btn btn-block btn-instagram">Hesabınız Yok Mu?</a>
-                                        <a asp-controller="Account" asp-action="RecoverPassword" class="btn btn-block btn-instagram">Şifremi Unuttum</a>
-
+                                <div class="form-group">
+                                    <div class="col-md-offset-1 col-md-10">
+                                        <input type="submit" value="Hesap Oluştur" class="btn btn-instagram btn-block" />
+                                        <a asp-controller="Account" asp-action="Login" class="btn btn-block btn-instagram">Geri Dön</a>
                                     </div>
                                 </div>
                             </div>
-
-                        </form>
+                            </form>
                     </div>
                 </div>
             </div>
         </div><!-- /Page Content -->
     </div><!-- /Page Container -->
     <!-- Javascripts -->
-    <script src="~/assets/plugins/jquery/jquery-3.1.0.min.js"></script>
-    <script src="~/assets/plugins/bootstrap/js/bootstrap.min.js"></script>
-    <script src="~/assets/plugins/jquery-slimscroll/jquery.slimscroll.min.js"></script>
-    <script src="~/assets/plugins/uniform/js/jquery.uniform.standalone.js"></script>
-    <script src="~/assets/plugins/switchery/switchery.min.js"></script>
-    <script src="~/assets/js/ecaps.min.js"></script>
-    <script src="~/assets/Scripts/jquery-1.10.2.min.js"></script>
-    <script src="~/assets/Scripts/jquery.validate.min.js"></script>
-    <script src="~/assets/Scripts/jquery.validate.unobtrusive.min.js"></script>
+
 </body>
 </html>
 
+
+
+<script src="~/assets/Scripts/jquery-1.10.2.min.js"></script>
+<script src="~/assets/Scripts/jquery.validate.min.js"></script>
+<script src="~/assets/Scripts/jquery.validate.unobtrusive.min.js"></script>
+<script src="~/assets/plugins/jquery/jquery-3.1.0.min.js"></script>
+<script src="~/assets/plugins/bootstrap/js/bootstrap.min.js"></script>
+<script src="~/assets/plugins/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+<script src="~/assets/plugins/uniform/js/jquery.uniform.standalone.js"></script>
+<script src="~/assets/plugins/switchery/switchery.min.js"></script>
+<script src="~/assets/js/ecaps.min.js"></script>
