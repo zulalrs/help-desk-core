@@ -7,12 +7,6 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.1.2" PrivateAssets="All" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.1.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\HelpDesk.BLL\HelpDesk.BLL.csproj" />
-    <ProjectReference Include="..\HelpDesk.Models\HelpDesk.Models.csproj" />
   </ItemGroup>
 
 </Project>
