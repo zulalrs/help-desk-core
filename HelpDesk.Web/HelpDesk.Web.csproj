@@ -534,4 +534,9 @@
     <ProjectReference Include="..\HelpDesk.Models\HelpDesk.Models.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\assets\lightbox\.github\" />
+    <Folder Include="wwwroot\assets\lightbox\dist\images\" />
+  </ItemGroup>
+
 </Project>
