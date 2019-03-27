@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using HelpDesk.BLL.Account;
+using HelpDesk.BLL.Helpers;
 using HelpDesk.Models.Enums;
 using HelpDesk.Models.IdentityEntities;
 using HelpDesk.Models.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using static HelpDesk.BLL.Account.MembershipTools;
@@ -51,6 +53,97 @@ namespace HelpDesk.Web.Controllers
             var user = await _userManager.GetUserAsync(HttpContext.User);
             var data = AutoMapper.Mapper.Map<ApplicationUser, UserProfileVM>(user);
             return View(data);
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public ActionResult Register()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Register(RegisterVM model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("Register", model);
+            }
+            try
+            {
+                
+                //var user = await _userManager.FindByNameAsync(model.UserName);
+                //if (user != null)
+                //{
+                //    ModelState.AddModelError("UserName", "Bu kullanıcı adı daha önceden alınmıştır");
+                //    return View("Register", model);
+                //}
+
+                var newUser = new ApplicationUser()
+                {
+                    //AvatarPath = "/assets/images/icon-noprofile.png",
+                    EmailConfirmed = false,
+                    Name = model.Name,
+                    Surname = model.Surname,
+                    Email = model.Email,
+                    UserName = model.UserName,
+                    //Location = model.Location == Models.Enums.Locations.KonumYok ? Models.Enums.Locations.Beşiktaş : model.Location,
+                };
+                newUser.ActivationCode = StringHelpers.GetCode();
+
+                var result = await _userManager.CreateAsync(newUser, model.Password);
+                if (result.Succeeded)
+                {
+                    switch (_userManager.Users.Count())
+                    {
+                        case 1:
+                            await _userManager.AddToRoleAsync(newUser, "Admin");
+                            break;
+                        case 2:
+                            await _userManager.AddToRoleAsync(newUser, "Operator");
+                            break;
+                        case 3:
+                            await _userManager.AddToRoleAsync(newUser, "Technician");
+                            break;
+                        default:
+                            await _userManager.AddToRoleAsync(newUser, "Customer");
+                            break;
+                    }
+
+                    //string SiteUrl = Request.Url.Scheme + System.Uri.SchemeDelimiter + Request.Url.Host +
+                    //                 (Request.Url.IsDefaultPort ? "" : ":" + Request.Url.Port);
+
+                    //var emailService = new EmailService();
+                    //var body = $"Merhaba <b>{newUser.Name} {newUser.Surname}</b><br>Hesabınızı aktif etmek için aşağıdaki linke tıklayınız<br> <a href='{SiteUrl}/account/activation?code={newUser.ActivationCode}' >Aktivasyon Linki </a> ";
+                    //await emailService.SendAsync(new IdentityMessage() { Body = body, Subject = "Sitemize Hoşgeldiniz" }, newUser.Email);
+                }
+                else
+                {
+                    var err = "";
+                    foreach (var resultError in result.Errors)
+                    {
+                        err += resultError + " ";
+                    }
+                    ModelState.AddModelError("", err);
+                    return View("Register", model);
+                }
+
+                TempData["Message1"] = "Kaydınız alınmıştır. Lütfen giriş yapınız";
+                return RedirectToAction("Login");
+            }
+            catch (Exception ex)
+            {
+                TempData["Message"] = new ErrorVM()
+                {
+                    Text = $"Bir hata oluştu {ex.Message}",
+                    ActionName = "Register",
+                    ControllerName = "Account",
+                    ErrorCode = 500
+                };
+                return RedirectToAction("Error500", "Home");
+            }
         }
 
         [HttpGet]
