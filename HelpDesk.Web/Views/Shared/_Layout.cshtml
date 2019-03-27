@@ -1,74 +1,114 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - HelpDesk.Web</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Teknik Servis Admin Panel">
+    <meta name="keywords" content="admin,dashboard">
+    <meta name="author" content="skcats">
+    <!-- The above 6 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <!-- Title -->
+    <title>HelpDesk - @ViewBag.Title</title>
 
     <environment include="Development">
-        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
-        <link rel="stylesheet" href="~/css/site.css" />
+        @*<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+            <link rel="stylesheet" href="~/css/site.css" />*@
+        <!-- Styles -->
+        <link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
+        <link href="~/assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+        <link href="~/assets/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+        <link href="~/assets/plugins/icomoon/style.css" rel="stylesheet">
+        <link href="~/assets/plugins/uniform/css/default.css" rel="stylesheet" />
+        <link href="~/assets/plugins/switchery/switchery.min.css" rel="stylesheet" />
+
+        <!-- Theme Styles -->
+        <link href="~/assets/css/ecaps.min.css" rel="stylesheet">
+        <link href="~/assets/css/custom.css" rel="stylesheet">
     </environment>
-    <environment exclude="Development">
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"
-              asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
-              asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
-        <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
-    </environment>
+    @*<environment exclude="Development">
+            <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"
+                  asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
+                  asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
+            <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
+        </environment>*@
+
+    @RenderSection("top", false)
+    @RenderSection("timelinetop", false)
+    @*<partial name="_CookieConsentPartial" />*@
 </head>
 <body>
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand">HelpDesk.Web</a>
-            </div>
-            <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
-                    <li><a asp-area="" asp-controller="Home" asp-action="About">About</a></li>
-                    <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>
-                </ul>
-            </div>
-        </div>
-    </nav>
 
-    <partial name="_CookieConsentPartial" />
+    <!-- Page Container -->
+    <div class="page-container">
+        @{await Html.RenderPartialAsync("~/Views/Shared/Partial/_DrawerPartial.cshtml");}
+        <!-- Page Content -->
+        <div class="page-content">
+            @{await Html.RenderPartialAsync("~/Views/Shared/Partial/_HeaderPartial.cshtml");}
 
-    <div class="container body-content">
-        @RenderBody()
-        <hr />
-        <footer>
-            <p>&copy; 2019 - HelpDesk.Web</p>
-        </footer>
-    </div>
+            <!-- Page Inner -->
+            <div class="page-inner">
+                <div class="page-title">
+                    <h3 class="breadcrumb-header">@ViewBag.Title</h3>
+                </div>
+                <div id="main-wrapper">
+                    <div class="row">
+                        <button onclick="topFunction()" id="myBtn" title="Go to top"><i class="fa fa-chevron-up"></i></button>
+                        @RenderBody()
+                    </div><!-- Row -->
+                </div><!-- Main Wrapper -->
+                @{await Html.RenderPartialAsync("~/Views/Shared/Partial/_FooterPartial.cshtml");}
 
-    <environment include="Development">
-        <script src="~/lib/jquery/dist/jquery.js"></script>
-        <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
-        <script src="~/js/site.js" asp-append-version="true"></script>
-    </environment>
-    <environment exclude="Development">
-        <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-3.3.1.min.js"
-                asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
-                asp-fallback-test="window.jQuery"
-                crossorigin="anonymous"
-                integrity="sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT">
-        </script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"
-                asp-fallback-src="~/lib/bootstrap/dist/js/bootstrap.min.js"
-                asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal"
-                crossorigin="anonymous"
-                integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd">
-        </script>
-        <script src="~/js/site.min.js" asp-append-version="true"></script>
-    </environment>
+            </div><!-- /Page Inner -->
+            @{await Html.RenderPartialAsync("~/Views/Shared/Partial/_ModalPartial.cshtml");}
+        </div><!-- /Page Content -->
+    </div><!-- /Page Container -->
+    <!-- Javascripts -->
+    <script src="~/assets/plugins/jquery/jquery-3.1.0.min.js"></script>
+    <script src="~/assets/plugins/bootstrap/js/bootstrap.min.js"></script>
+    <script src="~/assets/plugins/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+    <script src="~/assets/plugins/uniform/js/jquery.uniform.standalone.js"></script>
+    <script src="~/assets/plugins/switchery/switchery.min.js"></script>
+    <script src="~/assets/js/ecaps.min.js"></script>
+    @RenderSection("bottom", false)
+    @RenderSection("timelinebottom", false)
 
-    @RenderSection("Scripts", required: false)
+    <style>
+        #myBtn {
+            display: none; /* Hidden by default */
+            position: fixed; /* Fixed/sticky position */
+            bottom: 20px; /* Place the button at the bottom of the page */
+            right: 30px; /* Place the button 30px from the right */
+            z-index: 99; /* Make sure it does not overlap */
+            border: none; /* Remove borders */
+            outline: none; /* Remove outline */
+            background-color: darkgray; /* Set a background color */
+            color: white; /* Text color */
+            cursor: pointer; /* Add a mouse pointer on hover */
+            padding: 0 5px 5px 5px; /* Some padding */
+            border-radius: 15px; /* Rounded corners */
+            font-size: 30px; /* Increase font size */
+        }
+
+            #myBtn:hover {
+                background-color: #555; /* Add a dark-grey background on hover */
+            }
+    </style>
+    <script>
+        // When the user scrolls down 20px from the top of the document, show the button
+        window.onscroll = function () { scrollFunction() };
+        function scrollFunction() {
+            if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                document.getElementById("myBtn").style.display = "block";
+            } else {
+                document.getElementById("myBtn").style.display = "none";
+            }
+        }
+        // When the user clicks on the button, scroll to the top of the document
+        function topFunction() {
+            document.body.scrollTop = 0; // For Safari
+            document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+        }
+    </script>
 </body>
 </html>
