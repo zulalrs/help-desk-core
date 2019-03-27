@@ -40,7 +40,7 @@ namespace HelpDesk.Web.Controllers
             }
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             //var userManager = NewUserManager();
             //var userId = HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId();
@@ -48,7 +48,9 @@ namespace HelpDesk.Web.Controllers
             //if (user == null)
             //    RedirectToAction("Error500", "Home");
             //var data = Mapper.Map<User, UserProfileVM>(user);
-            return View();
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+            var data = AutoMapper.Mapper.Map<ApplicationUser, UserProfileVM>(user);
+            return View(data);
         }
 
         [HttpGet]

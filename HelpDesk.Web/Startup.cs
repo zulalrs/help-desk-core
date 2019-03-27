@@ -1,7 +1,9 @@
 ﻿using System;
+using AutoMapper;
 using HelpDesk.BLL.Account;
 using HelpDesk.DAL;
 using HelpDesk.Models.IdentityEntities;
+using HelpDesk.Models.ViewModels;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -74,7 +76,18 @@ namespace HelpDesk.Web
             //services.AddScoped<IRepository<Category, int>, CategoryRepo>();
             services.AddScoped<MembershipTools, MembershipTools>();
 
+            services.AddAutoMapper();
+
+            Mapper.Initialize(ProfileUserMapping);
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+        }
+
+        private void ProfileUserMapping(IMapperConfigurationExpression cfg)
+        {
+            cfg.CreateMap<ApplicationUser, UserProfileVM>()
+                .ForMember(dest => dest.AvatarPath, opt => opt.MapFrom((s, d) => s.AvatarPath ?? "/assets/images/icon-noprofile.png"))
+                .ReverseMap();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
