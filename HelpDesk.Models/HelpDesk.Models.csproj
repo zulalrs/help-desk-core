@@ -6,6 +6,8 @@
 
   <ItemGroup>
     <Folder Include="Entities\" />
+    <Folder Include="Enums\" />
+    <Folder Include="Models\" />
     <Folder Include="ViewModels\" />
   </ItemGroup>
 
