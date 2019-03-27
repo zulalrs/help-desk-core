@@ -48,7 +48,7 @@ namespace HelpDesk.Web.Controllers
             //if (user == null)
             //    RedirectToAction("Error500", "Home");
             //var data = Mapper.Map<User, UserProfileVM>(user);
-            //return View(data);
+            return View();
         }
 
         [HttpGet]
@@ -64,7 +64,7 @@ namespace HelpDesk.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> LoginAsync(LoginVM model)
+        public async Task<IActionResult> Login(LoginVM model)
         {
             try
             {
