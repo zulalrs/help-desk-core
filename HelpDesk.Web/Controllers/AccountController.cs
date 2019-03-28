@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using HelpDesk.BLL.Account;
-using HelpDesk.BLL.Helpers;
+﻿using HelpDesk.BLL.Helpers;
+using HelpDesk.BLL.Services.Senders;
 using HelpDesk.Models.Enums;
 using HelpDesk.Models.IdentityEntities;
 using HelpDesk.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using static HelpDesk.BLL.Account.MembershipTools;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace HelpDesk.Web.Controllers
 {
@@ -73,13 +71,13 @@ namespace HelpDesk.Web.Controllers
             }
             try
             {
-                
-                //var user = await _userManager.FindByNameAsync(model.UserName);
-                //if (user != null)
-                //{
-                //    ModelState.AddModelError("UserName", "Bu kullanıcı adı daha önceden alınmıştır");
-                //    return View("Register", model);
-                //}
+
+                var user = await _userManager.FindByNameAsync(model.UserName);
+                if (user != null)
+                {
+                    ModelState.AddModelError("UserName", "Bu kullanıcı adı daha önceden alınmıştır");
+                    return View("Register", model);
+                }
 
                 var newUser = new ApplicationUser()
                 {
@@ -117,7 +115,7 @@ namespace HelpDesk.Web.Controllers
 
                     //var emailService = new EmailService();
                     //var body = $"Merhaba <b>{newUser.Name} {newUser.Surname}</b><br>Hesabınızı aktif etmek için aşağıdaki linke tıklayınız<br> <a href='{SiteUrl}/account/activation?code={newUser.ActivationCode}' >Aktivasyon Linki </a> ";
-                    //await emailService.SendAsync(new IdentityMessage() { Body = body, Subject = "Sitemize Hoşgeldiniz" }, newUser.Email);
+                    //await emailService.SendAsync(new MailModel() { Body = body, Subject = "Sitemize Hoşgeldiniz" }, newUser.Email);
                 }
                 else
                 {
