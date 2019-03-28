@@ -1,4 +1,4 @@
-﻿@using HelpDesk.BLL.Account
+﻿@*@using HelpDesk.BLL.Account*@
 @model HelpDesk.Models.ViewModels.UserProfileVM
 @{
     ViewData["Title"] = "Kullanıcı Detay";
@@ -12,29 +12,29 @@
                     <td style="width: 35%;font-weight: bold"></td>
                     <td style="width: 65%;"><img src="@Model.AvatarPath" style="width: 200px; height: 200px;" /></td>
                 </tr>*@
-            <tr>
+            @*<tr>
                 <td style="width: 35%;font-weight: bold">Adı Soyadı</td>
                 <td style="width: 65%;">@Model.Name @Model.Surname</td>
-            </tr>
+            </tr>*@
             <tr>
                 <td style="width: 35%;font-weight: bold">Kullanıcı Adı</td>
-                <td style="width: 65%;">@Model.UserName</td>
+                <td style="width: 65%;">@(Model?.UserName??"aysenur")</td>
             </tr>
-            <tr>
+            @*<tr>
                 <td style="width: 35%;font-weight: bold">Email</td>
                 <td style="width: 65%;">@Model.Email</td>
-            </tr>
+            </tr>*@
             @*<tr>
                     <td style="width: 35%;font-weight: bold">Konum</td>
                     <td style="width: 65%;">@Model.Location</td>
                 </tr>*@
             <tr>
                 <td style="width: 35%;font-weight: bold">Telefon Numarası</td>
-                <td style="width: 65%;">@Model.PhoneNumber</td>
+                <td style="width: 65%;">@(Model?.PhoneNumber??"000")</td>
             </tr>
             <tr>
                 <td style="width: 35%;font-weight: bold">Kayıt Tarihi</td>
-                <td style="width: 65%;">@Model.RegisterDate</td>
+                <td style="width: 65%;">@(Model?.RegisterDate??DateTime.Now)</td>
             </tr>
         </tbody>
     </table>

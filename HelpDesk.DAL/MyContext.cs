@@ -1,4 +1,5 @@
-﻿using HelpDesk.Models.IdentityEntities;
+﻿using HelpDesk.Models.Entities;
+using HelpDesk.Models.IdentityEntities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
@@ -6,10 +7,10 @@ using System.Linq;
 
 namespace HelpDesk.DAL
 {
-    public class MyContext:IdentityDbContext<ApplicationUser,ApplicationRole,string>
+    public class MyContext : IdentityDbContext<ApplicationUser, ApplicationRole, string>
     {
         public MyContext(DbContextOptions<MyContext> options)
-            :base(options)
+            : base(options)
         {
         }
 
@@ -27,5 +28,10 @@ namespace HelpDesk.DAL
 
             return base.SaveChanges();
         }
+
+        public virtual DbSet<Issue> Issues { get; set; }
+        public virtual DbSet<IssueLog> IssueLogs { get; set; }
+        public virtual DbSet<Photograph> Photographs { get; set; }
+        public virtual DbSet<Survey> Surveys { get; set; }
     }
 }

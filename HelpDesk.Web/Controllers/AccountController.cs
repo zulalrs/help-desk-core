@@ -4,6 +4,7 @@ using HelpDesk.Models.Enums;
 using HelpDesk.Models.IdentityEntities;
 using HelpDesk.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -17,12 +18,14 @@ namespace HelpDesk.Web.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<ApplicationRole> _roleManager;
         private readonly SignInManager<ApplicationUser> _signinManager;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public AccountController(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, SignInManager<ApplicationUser> signinManager)
+        public AccountController(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, SignInManager<ApplicationUser> signinManager, IHttpContextAccessor httpContextAccessor)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _signinManager = signinManager;
+            _httpContextAccessor = httpContextAccessor;
 
             var roleNames = Enum.GetNames(typeof(IdentityRoles));
             foreach (var roleName in roleNames)
@@ -48,6 +51,7 @@ namespace HelpDesk.Web.Controllers
             //if (user == null)
             //    RedirectToAction("Error500", "Home");
             //var data = Mapper.Map<User, UserProfileVM>(user);
+            var girdimi = HttpContext.User.Identity.IsAuthenticated;
             var user = await _userManager.GetUserAsync(HttpContext.User);
             var data = AutoMapper.Mapper.Map<ApplicationUser, UserProfileVM>(user);
             return View(data);
