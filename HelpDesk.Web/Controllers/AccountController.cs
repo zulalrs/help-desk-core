@@ -42,17 +42,12 @@ namespace HelpDesk.Web.Controllers
                 }
             }
         }
-
-        public async Task<IActionResult> Index()
+        [HttpGet]
+        public async Task<IActionResult> Index(LoginVM model)
         {
-            //var userManager = NewUserManager();
-            //var userId = HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId();
-            //var user = userManager.FindById(userId);
-            //if (user == null)
-            //    RedirectToAction("Error500", "Home");
-            //var data = Mapper.Map<User, UserProfileVM>(user);
-            var girdimi = HttpContext.User.Identity.IsAuthenticated;
-            var user = await _userManager.GetUserAsync(HttpContext.User);
+            var user = await _userManager.FindByNameAsync(model.UserName);
+            if (user == null)
+                RedirectToAction("Index", "Home");
             var data = AutoMapper.Mapper.Map<ApplicationUser, UserProfileVM>(user);
             return View(data);
         }
@@ -153,7 +148,7 @@ namespace HelpDesk.Web.Controllers
         {
             if (HttpContext.User.Identity.IsAuthenticated)
             {
-                //var user= await _userManager.GetUserAsync(HttpContext.User);
+                //var user = await _userManager.GetUserAsync(HttpContext.User);
                 // user.Id;
                 return RedirectToAction("Index", "Account");
             }
@@ -173,7 +168,7 @@ namespace HelpDesk.Web.Controllers
                 var result = await _signinManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, true);
 
                 if (result.Succeeded)
-                    return RedirectToAction("Index", "Account");
+                    return RedirectToAction("Index", "Account", model);
 
                 ModelState.AddModelError(String.Empty, "Kullanıcı adı veya şifre hatalı");
                 return View(model);
