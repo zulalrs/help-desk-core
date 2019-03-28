@@ -10,6 +10,7 @@ namespace HelpDesk.BLL.Services.Senders
 {
     public class EmailService
     {
+
         //private string _userId = HttpContext.Current.User.Identity.GetUserId();
         public string[] Cc { get; set; }
         public string[] Bcc { get; set; }
