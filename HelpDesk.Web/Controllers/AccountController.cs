@@ -124,9 +124,9 @@ namespace HelpDesk.Web.Controllers
                     var err = "";
                     foreach (var resultError in result.Errors)
                     {
-                        err += resultError + " ";
+                        err += resultError.Description;
                     }
-                    ModelState.AddModelError("", err);
+                    ModelState.AddModelError(String.Empty, err);
                     return View("Register", model);
                 }
 
