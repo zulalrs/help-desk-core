@@ -1,13 +1,16 @@
-﻿using HelpDesk.BLL.Helpers;
+﻿using HelpDesk.BLL.Account;
+using HelpDesk.BLL.Helpers;
 using HelpDesk.BLL.Services.Senders;
 using HelpDesk.Models.Enums;
 using HelpDesk.Models.IdentityEntities;
 using HelpDesk.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -16,40 +19,36 @@ namespace HelpDesk.Web.Controllers
 {
     public class AccountController : BaseController
     {
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly RoleManager<ApplicationRole> _roleManager;
-        private readonly SignInManager<ApplicationUser> _signinManager;
-        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IHostingEnvironment _hostingEnvironment;
+        private readonly MembershipTools _membershipTools;
 
-        public AccountController(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, SignInManager<ApplicationUser> signinManager, IHttpContextAccessor httpContextAccessor)
+        public AccountController(MembershipTools membershipTools,IHostingEnvironment hostingEnvironment)
         {
-            _userManager = userManager;
-            _roleManager = roleManager;
-            _signinManager = signinManager;
-            _httpContextAccessor = httpContextAccessor;
+            _membershipTools = membershipTools;
+            _hostingEnvironment = hostingEnvironment;
 
             var roleNames = Enum.GetNames(typeof(IdentityRoles));
             foreach (var roleName in roleNames)
             {
-                if (!_roleManager.RoleExistsAsync(roleName).Result)
+                if (!_membershipTools.RoleManager.RoleExistsAsync(roleName).Result)
                 {
                     var role = new ApplicationRole()
                     {
                         Name = roleName
                     };
 
-                    var task = _roleManager.CreateAsync(role).Result;
+                    var task = _membershipTools.RoleManager.CreateAsync(role).Result;
                     Task.Run(() => task);
                 }
             }
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index(LoginVM model)
+        public async Task<IActionResult> Index()
         {
-            var user = await _userManager.FindByNameAsync(model.UserName);
+            var user = await _membershipTools.UserManager.GetUserAsync(HttpContext.User);
             if (user == null)
-                RedirectToAction("Index", "Home");
+                return RedirectToAction("Index", "Home");
             var data = AutoMapper.Mapper.Map<ApplicationUser, UserProfileVM>(user);
             return View(data);
         }
@@ -73,7 +72,7 @@ namespace HelpDesk.Web.Controllers
             try
             {
 
-                var user = await _userManager.FindByNameAsync(model.UserName);
+                var user = await _membershipTools.UserManager.FindByNameAsync(model.UserName);
                 if (user != null)
                 {
                     ModelState.AddModelError("UserName", "Bu kullanıcı adı daha önceden alınmıştır");
@@ -82,7 +81,7 @@ namespace HelpDesk.Web.Controllers
 
                 var newUser = new ApplicationUser()
                 {
-                    //AvatarPath = "/assets/images/icon-noprofile.png",
+                    AvatarPath = "/assets/images/icon-noprofile.png",
                     EmailConfirmed = false,
                     Name = model.Name,
                     Surname = model.Surname,
@@ -92,22 +91,22 @@ namespace HelpDesk.Web.Controllers
                 };
                 newUser.ActivationCode = StringHelpers.GetCode();
 
-                var result = await _userManager.CreateAsync(newUser, model.Password);
+                var result = await _membershipTools.UserManager.CreateAsync(newUser, model.Password);
                 if (result.Succeeded)
                 {
-                    switch (_userManager.Users.Count())
+                    switch (_membershipTools.UserManager.Users.Count())
                     {
                         case 1:
-                            await _userManager.AddToRoleAsync(newUser, "Admin");
+                            await _membershipTools.UserManager.AddToRoleAsync(newUser, "Admin");
                             break;
                         case 2:
-                            await _userManager.AddToRoleAsync(newUser, "Operator");
+                            await _membershipTools.UserManager.AddToRoleAsync(newUser, "Operator");
                             break;
                         case 3:
-                            await _userManager.AddToRoleAsync(newUser, "Technician");
+                            await _membershipTools.UserManager.AddToRoleAsync(newUser, "Technician");
                             break;
                         default:
-                            await _userManager.AddToRoleAsync(newUser, "Customer");
+                            await _membershipTools.UserManager.AddToRoleAsync(newUser, "Customer");
                             break;
                     }
 
@@ -168,10 +167,10 @@ namespace HelpDesk.Web.Controllers
                     return View("Login", model);
                 }
 
-                var result = await _signinManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, true);
+                var result = await _membershipTools.SignInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, true);
 
                 if (result.Succeeded)
-                    return RedirectToAction("Index", "Account", model);
+                    return RedirectToAction("Index", "Account");
 
                 ModelState.AddModelError(String.Empty, "Kullanıcı adı veya şifre hatalı");
                 return View(model);
@@ -190,7 +189,121 @@ namespace HelpDesk.Web.Controllers
         }
 
         [HttpGet]
-        [Authorize]
+        public async Task<ActionResult> Logout()
+        {
+            await _membershipTools.SignInManager.SignOutAsync();
+            //return RedirectToAction("Index", "Home");
+            return RedirectToAction("Login", "Account");
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> UserProfile()
+        {
+            try
+            {
+                var user = await _membershipTools.UserManager.GetUserAsync(HttpContext.User);
+                var data = new UserProfileVM()
+                {
+                    Email = user.Email,
+                    Id = user.Id,
+                    Name = user.Name,
+                    PhoneNumber = user.PhoneNumber,
+                    Surname = user.Surname,
+                    UserName = user.UserName,
+                    AvatarPath = string.IsNullOrEmpty(user.AvatarPath) ? "/assets/images/icon-noprofile.png" : user.AvatarPath,
+                    //Location = user.Location
+                };
+
+                return View(data);
+            }
+            catch (Exception ex)
+            {
+                TempData["Message"] = new ErrorVM()
+                {
+                    Text = $"Bir hata oluştu {ex.Message}",
+                    ActionName = "UserProfile",
+                    ControllerName = "Account",
+                    ErrorCode = 500
+                };
+                return RedirectToAction("Error500", "Home");
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> UserProfile(UserProfileVM model)
+        {
+            var user = await _membershipTools.UserManager.FindByIdAsync(model.Id);
+
+            if (!ModelState.IsValid)
+            {
+                return View("UserProfile", model);
+            }
+
+
+            //if (model.PostedFile != null &&
+            //       model.PostedFile.Length > 0)
+            //{
+            //    var file = model.PostedFile;
+            //    string fileName = Path.GetFileNameWithoutExtension(file.FileName);
+            //    string extName = Path.GetExtension(file.FileName);
+            //    fileName = StringHelpers.UrlFormatConverter(fileName);
+            //    fileName += StringHelpers.GetCode();
+            //    var directorypath = Server.MapPath("~/Upload/");
+            //    var filepath = Server.MapPath("~/Upload/") + fileName + extName;
+
+            //    if (!Directory.Exists(directorypath))
+            //    {
+            //        Directory.CreateDirectory(directorypath);
+            //    }
+
+            //    file.SaveAs(filepath);
+
+            //    WebImage img = new WebImage(filepath);
+            //    img.Resize(250, 250, false);
+            //    img.AddTextWatermark("TeknikServis");
+            //    img.Save(filepath);
+            //    var oldPath = user.AvatarPath;
+            //    if (oldPath != "/assets/images/icon-noprofile.png")
+            //    {
+            //        System.IO.File.Delete(Server.MapPath(oldPath));
+            //    }
+            //    user.AvatarPath = "/Upload/" + fileName + extName;
+            //}
+
+            try
+            {
+
+
+                user.Name = model.Name;
+                user.Surname = model.Surname;
+                user.PhoneNumber = model.PhoneNumber;
+                //user.Location = model.Location;
+                if (user.Email != model.Email)
+                {
+                    //todo tekrar aktivasyon maili gönderilmeli. rolü de aktif olmamış role çevrilmeli.
+                }
+                user.Email = model.Email;
+
+                await _membershipTools.UserManager.UpdateAsync(user);
+                TempData["Message"] = "Güncelleme işlemi başarılı.";
+                return RedirectToAction("UserProfile");
+            }
+            catch (Exception ex)
+            {
+                TempData["Message"] = new ErrorVM()
+                {
+                    Text = $"Bir hata oluştu: {ex.Message}",
+                    ActionName = "UserProfile",
+                    ControllerName = "Account",
+                    ErrorCode = 500
+                };
+                return RedirectToAction("Error500", "Home");
+            }
+        }
+
+
+        [HttpGet]
         public ActionResult ChangePassword()
         {
             return View();
@@ -198,13 +311,11 @@ namespace HelpDesk.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize]
         public async Task<ActionResult> ChangePassword(ChangePasswordVM model)
         {
             try
             {
-                var id = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
-                var user = await _userManager.FindByIdAsync(id);
+                var user = await _membershipTools.UserManager.GetUserAsync(HttpContext.User);
 
                 var data = new ChangePasswordVM()
                 {
@@ -219,8 +330,7 @@ namespace HelpDesk.Web.Controllers
                     return RedirectToAction("Index", "Home");
                 }
 
-                var result = await _userManager.ChangePasswordAsync(
-                    await _userManager.FindByIdAsync(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Name)?.Value),
+                var result = await _membershipTools.UserManager.ChangePasswordAsync(await _membershipTools.UserManager.GetUserAsync(HttpContext.User),
                     model.OldPassword, model.NewPassword);
 
                 if (result.Succeeded)
@@ -254,13 +364,5 @@ namespace HelpDesk.Web.Controllers
                 return RedirectToAction("Error500", "Home");
             }
         }
-        [HttpGet]
-        public async Task<ActionResult> Logout()
-        {
-            await _signinManager.SignOutAsync();
-            //return RedirectToAction("Index", "Home");
-            return RedirectToAction("Login", "Account");
-        }
-
     }
 }

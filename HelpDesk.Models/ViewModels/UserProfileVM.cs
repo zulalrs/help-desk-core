@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -43,7 +44,7 @@ namespace HelpDesk.Models.ViewModels
         //[DisplayName("Konum")]
         //public Locations Location { get; set; }
 
-        //[DisplayName("Fotoğraf")]
-        //public HttpPostedFileBase PostedFile { get; set; }
+        [DisplayName("Fotoğraf")]
+        public IFormFile PostedFile { get; set; }
     }
 }

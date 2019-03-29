@@ -11,12 +11,14 @@ namespace HelpDesk.BLL.Account
     public class MembershipTools
     {
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly RoleManager<ApplicationRole> _roleManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public MembershipTools(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IHttpContextAccessor httpContextAccessor)
+        public MembershipTools(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, SignInManager<ApplicationUser> signInManager, IHttpContextAccessor httpContextAccessor)
         {
             _userManager = userManager;
+            _roleManager = roleManager;
             _signInManager = signInManager;
             _httpContextAccessor = httpContextAccessor;
         }
@@ -24,6 +26,10 @@ namespace HelpDesk.BLL.Account
         public UserManager<ApplicationUser> UserManager
         {
             get { return _userManager; }
+        }
+        public RoleManager<ApplicationRole> RoleManager
+        {
+            get { return _roleManager; }
         }
         public SignInManager<ApplicationUser> SignInManager
         {
