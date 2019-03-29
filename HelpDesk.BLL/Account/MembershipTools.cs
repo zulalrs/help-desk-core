@@ -35,6 +35,11 @@ namespace HelpDesk.BLL.Account
         {
             get { return _signInManager; }
         }
+        public IHttpContextAccessor IHttpContextAccessor
+        {
+            get { return _httpContextAccessor; }
+        }
+
         public async Task<string> GetNameSurname(string userId)
         {
             ApplicationUser user;

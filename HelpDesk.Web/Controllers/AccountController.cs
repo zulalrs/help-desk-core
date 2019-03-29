@@ -273,8 +273,6 @@ namespace HelpDesk.Web.Controllers
 
             try
             {
-
-
                 user.Name = model.Name;
                 user.Surname = model.Surname;
                 user.PhoneNumber = model.PhoneNumber;
@@ -302,7 +300,6 @@ namespace HelpDesk.Web.Controllers
             }
         }
 
-
         [HttpGet]
         public ActionResult ChangePassword()
         {
@@ -316,6 +313,9 @@ namespace HelpDesk.Web.Controllers
             try
             {
                 var user = await _membershipTools.UserManager.GetUserAsync(HttpContext.User);
+
+                //var id = _membershipTools.IHttpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
+                //var user = await _membershipTools.UserManager.FindByIdAsync(id);
 
                 var data = new ChangePasswordVM()
                 {
