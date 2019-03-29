@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace HelpDesk.Web.Controllers
@@ -42,6 +43,7 @@ namespace HelpDesk.Web.Controllers
                 }
             }
         }
+
         [HttpGet]
         public async Task<IActionResult> Index(LoginVM model)
         {
@@ -162,6 +164,7 @@ namespace HelpDesk.Web.Controllers
             {
                 if (!ModelState.IsValid)
                 {
+
                     return View("Login", model);
                 }
 
@@ -186,6 +189,71 @@ namespace HelpDesk.Web.Controllers
             }
         }
 
+        [HttpGet]
+        [Authorize]
+        public ActionResult ChangePassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize]
+        public async Task<ActionResult> ChangePassword(ChangePasswordVM model)
+        {
+            try
+            {
+                var id = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
+                var user = await _userManager.FindByIdAsync(id);
+
+                var data = new ChangePasswordVM()
+                {
+                    OldPassword = model.OldPassword,
+                    NewPassword = model.NewPassword,
+                    ConfirmNewPassword = model.ConfirmNewPassword
+                };
+
+                model = data;
+                if (!ModelState.IsValid)
+                {
+                    return RedirectToAction("Index", "Home");
+                }
+
+                var result = await _userManager.ChangePasswordAsync(
+                    await _userManager.FindByIdAsync(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Name)?.Value),
+                    model.OldPassword, model.NewPassword);
+
+                if (result.Succeeded)
+                {
+                    var emailService = new EmailService();
+                    var body = $"Merhaba <b>{user.Name} {user.Surname}</b><br>Hesabınızın şifresi değiştirilmiştir. <br> Bilginiz dahilinde olmayan değişiklikler için hesabınızı güvence altına almanızı öneririz.</p>";
+                    emailService.Send(new MailModel() { Body = body, Subject = "Şifre Değiştirme hk." }, user.Email);
+
+                    return RedirectToAction("Logout", "Account");
+                }
+                else
+                {
+                    var err = "";
+                    foreach (var resultError in result.Errors)
+                    {
+                        err += resultError + " ";
+                    }
+                    ModelState.AddModelError("", err);
+                    return RedirectToAction("Index", "Home");
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["Message"] = new ErrorVM()
+                {
+                    Text = $"Bir hata oluştu {ex.Message}",
+                    ActionName = "ChangePassword",
+                    ControllerName = "Account",
+                    ErrorCode = 500
+                };
+                return RedirectToAction("Error500", "Home");
+            }
+        }
         [HttpGet]
         public async Task<ActionResult> Logout()
         {
