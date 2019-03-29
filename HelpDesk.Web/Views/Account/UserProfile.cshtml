@@ -1,8 +1,86 @@
-﻿
+﻿@model HelpDesk.Models.ViewModels.UserProfileVM
+
 @{
-    ViewData["Title"] = "UserProfile";
+    ViewBag.Title = $"{Model.Name} {Model.Surname} Profil Sayfası";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>UserProfile</h2>
+<h3 style="color:green">@(TempData["Message"] as string)</h3>
+<h3 style="color:red">@(TempData["Message2"] as string)</h3>
+
+
+<form asp-controller="Account" asp-action="UserProfile" method="post" enctype="multipart/form-data">
+    <div class="form-horizontal">
+        <hr />
+        <div asp-validation-summary="All" class="text-danger"></div>
+        <input type="hidden" asp-for="Id" />
+
+        <div class="form-group">
+            <label asp-for="Name" class="control-label col-md-2"></label>
+            <div class="col-md-4">
+                <input type="text" asp-for="Name" class="form-control input-rounded"/>
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Surname" class="control-label col-md-2"></label>
+            <div class="col-md-4">
+                <input type="text" asp-for="Surname" class="form-control input-rounded"/>
+                <span asp-validation-for="Surname" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="UserName" class="control-label col-md-2"></label>
+            <div class="col-md-4">
+                <input type="text" asp-for="UserName" class="form-control input-rounded" />
+                <span asp-validation-for="UserName" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Email" class="control-label col-md-2"></label>
+            <div class="col-md-4">
+                <input type="email" asp-for="Email" class="form-control input-rounded" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="PhoneNumber" class="control-label col-md-2"></label>
+            <div class="col-md-4">
+                <input type="number" asp-for="PhoneNumber" class="form-control input-rounded" />
+                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+            </div>
+        </div>
+        @*<div class="form-group">
+            @Html.LabelFor(model => model.Location, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-4">
+                @Html.EnumDropDownListFor(model => model.Location, new { @class = "form-control input-rounded" })
+                @Html.ValidationMessageFor(model => model.Location, "", new { @class = "text-danger" })
+            </div>
+        </div>*@
+
+        <div class="form-group">
+            <label asp-for="PostedFile" class="control-label col-md-2"></label>
+            <div class="col-md-4">
+                <input type="file" asp-for="PostedFile" class="form-control input-rounded" multiple="false" />
+                <span asp-validation-for="PostedFile" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-4">
+                <input type="submit" value="Kaydet" class="btn btn-instagram btn-block" />
+                <a asp-controller="Account" asp-action="ChangePassword" class="btn btn-google btn-block">Şifreyi Değiştir</a>
+            </div>
+        </div>
+    </div>
+</form>
+
+
+<script src="~/assets/Scripts/jquery-1.10.2.min.js"></script>
+<script src="~/assets/Scripts/jquery.validate.min.js"></script>
+<script src="~/assets/Scripts/jquery.validate.unobtrusive.min.js"></script>
 
