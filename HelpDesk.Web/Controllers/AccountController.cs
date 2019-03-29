@@ -186,5 +186,13 @@ namespace HelpDesk.Web.Controllers
             }
         }
 
+        [HttpGet]
+        public async Task<ActionResult> Logout()
+        {
+            await _signinManager.SignOutAsync();
+            //return RedirectToAction("Index", "Home");
+            return RedirectToAction("Login", "Account");
+        }
+
     }
 }

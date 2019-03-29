@@ -1,4 +1,5 @@
-﻿@*@using TeknikServis.BLL.Identity*@
+﻿@using HelpDesk.BLL.Account
+@inject MembershipTools MembershipTool
 <!-- Page Header -->
 <div class="page-header">
     <div class="search-form">
@@ -80,12 +81,12 @@
                             </li>
                         </ul>
                     </li>
-                    @*<li>
-                        <p class="text-capitalize" style="font-size:medium">@(MembershipTools.GetNameSurnameCurrent() ?? "Bulunamadi.")
-                        <p class="text-muted" style="font-size:small">@(MembershipTools.GetEmailCurrent() ?? "Bulunamadi.")</p>
+                    <li>
+                        <p class="text-capitalize" style="font-size:medium">@(await MembershipTool.GetNameSurname(null))
+                        <p class="text-muted" style="font-size:small">@(await MembershipTool.GetEmailCurrent(null))</p>
                     </li>
                     <li class="dropdown user-dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><img src="@MembershipTools.GetAvatarPath(null)" alt="Profil Fotoğrafı" class="img-circle"></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><img src=@(await MembershipTool.GetAvatarPath(null)) alt="Profil Fotoğrafı" class="img-circle"></a>
                         <ul class="dropdown-menu">
                             <li><a href="@Url.Action("Index","Home")">Profil</a></li>
                             <li><a href="#">Takvim</a></li>
@@ -94,7 +95,7 @@
                             <li><a href="#">Hesap Ayarları</a></li>
                             <li><a href="@Url.Action("Logout","Account")">Çıkış Yap</a></li>
                         </ul>
-                    </li>*@
+                    </li>
                 </ul>
             </div><!-- /.navbar-collapse -->
         </div><!-- /.container-fluid -->

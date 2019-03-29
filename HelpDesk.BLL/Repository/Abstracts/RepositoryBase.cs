@@ -2,6 +2,7 @@
 using HelpDesk.Models.Abstracts;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace HelpDesk.BLL.Repository.Abstracts
@@ -16,14 +17,19 @@ namespace HelpDesk.BLL.Repository.Abstracts
             DbContext = dbContext;
             DbObject = DbContext.Set<T>();
         }
-        public IQueryable<T> GetAll()
+
+        protected RepositoryBase()
         {
-            return DbObject;
         }
 
-        public IQueryable<T> GetAll(Func<T, bool> predicate)
+        public List<T> GetAll()
         {
-            return DbObject.Where(predicate).AsQueryable();
+            return DbObject.ToList();
+        }
+
+        public List<T> GetAll(Func<T, bool> predicate)
+        {
+            return DbObject.Where(predicate).AsQueryable().ToList();
         }
 
         public T GetById(TId id)
