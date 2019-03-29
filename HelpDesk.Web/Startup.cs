@@ -1,7 +1,10 @@
 ﻿using System;
 using AutoMapper;
 using HelpDesk.BLL.Account;
+using HelpDesk.BLL.Repository;
+using HelpDesk.BLL.Repository.Abstracts;
 using HelpDesk.DAL;
+using HelpDesk.Models.Entities;
 using HelpDesk.Models.IdentityEntities;
 using HelpDesk.Models.ViewModels;
 using Microsoft.AspNetCore.Builder;
@@ -73,8 +76,12 @@ namespace HelpDesk.Web
                 options.SlidingExpiration = true;
             });
 
-            //services.AddScoped<IRepository<Category, int>, CategoryRepo>();
             services.AddScoped<MembershipTools, MembershipTools>();
+
+            services.AddScoped<IRepository<Issue,string>,IssueRepo>();
+            services.AddScoped<IRepository<IssueLog, string>, IssueLogRepo>();
+            services.AddScoped<IRepository<Photograph,string>,PhotographRepo>();
+            services.AddScoped<IRepository<Survey, string>, SurveyRepo>();
 
             services.AddAutoMapper();
 

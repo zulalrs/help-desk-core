@@ -8,7 +8,7 @@ namespace HelpDesk.BLL.Services.Senders
     {
         MessageStates MessageState { get; }
 
-        Task SendAsync(MailModel message, params string[] contacts);
-        void Send(MailModel message, params string[] contacts);
+        Task SendAsync(EmailModel message, params string[] contacts);
+        void Send(EmailModel message, params string[] contacts);
     }
 }

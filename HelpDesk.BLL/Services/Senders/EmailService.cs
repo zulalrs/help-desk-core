@@ -36,7 +36,7 @@ namespace HelpDesk.BLL.Services.Senders
             SmtpPort = smtpPort;
         }
 
-        public async Task SendAsync(MailModel message, params string[] contacts)
+        public async Task SendAsync(EmailModel message, params string[] contacts)
         {
             //var userID = _userId ?? "system";
             try
@@ -88,7 +88,7 @@ namespace HelpDesk.BLL.Services.Senders
 
         }
 
-        public void Send(MailModel message, params string[] contacts)
+        public void Send(EmailModel message, params string[] contacts)
         {
             Task.Run(async () =>
             {

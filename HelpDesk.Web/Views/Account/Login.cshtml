@@ -43,7 +43,7 @@
         <div class="page-inner login-page">
             <div id="main-wrapper" class="container-fluid">
                 <div class="row">
-                    <div class="center-block login-box" style="width:400px;">
+                    <div class="center-block login-box" style="width:500px;">
                         <br />
                         <br />
                         <br />
@@ -60,7 +60,7 @@
                                 <div class="form-group">
                                     <div class="col-md-8 col-md-offset-2">
                                         <label asp-for="UserName">Kullanıcı Adı</label>
-                                        <input type="text" asp-for="UserName" class="form-control input-rounded" />
+                                        <input type="text" asp-for="UserName" class="form-control input-rounded" placeholder="Kullanıcı Adı" />
                                         @*<span asp-validation-for="ProductName" class="text-danger"></span>*@
                                     </div>
                                 </div>
@@ -68,13 +68,15 @@
                                 <div class="form-group">
                                     <div class="col-md-8 col-md-offset-2">
                                         <label asp-for="Password">Şifre</label>
-                                        <input type="password" asp-for="Password" class="form-control input-rounded" />
+                                        <input type="password" asp-for="Password" class="form-control input-rounded" placeholder="Şifre"/>
                                     </div>
                                 </div>
 
                                 <div class="form-group">
                                     <div class="col-md-6 col-md-offset-2">
-                                        <input type="checkbox" asp-for="RememberMe" class="checkbox" />Beni Hatırla
+                                        <label>
+                                            <input type="checkbox" asp-for="RememberMe" class="checkbox"/>Beni Hatırla
+                                        </label>
                                     </div>
                                 </div>
                                 <br /><br />

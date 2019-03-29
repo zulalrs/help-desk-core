@@ -14,6 +14,8 @@ using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using HelpDesk.DAL;
+using EmailService = HelpDesk.BLL.Services.Senders.EmailService;
 
 namespace HelpDesk.Web.Controllers
 {
@@ -21,11 +23,13 @@ namespace HelpDesk.Web.Controllers
     {
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly MembershipTools _membershipTools;
+        private readonly MyContext _dbContext;
 
-        public AccountController(MembershipTools membershipTools,IHostingEnvironment hostingEnvironment)
+        public AccountController(MembershipTools membershipTools, IHostingEnvironment hostingEnvironment, MyContext dbContext)
         {
             _membershipTools = membershipTools;
             _hostingEnvironment = hostingEnvironment;
+            _dbContext = dbContext;
 
             var roleNames = Enum.GetNames(typeof(IdentityRoles));
             foreach (var roleName in roleNames)
@@ -301,6 +305,7 @@ namespace HelpDesk.Web.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public ActionResult ChangePassword()
         {
             return View();
@@ -308,6 +313,7 @@ namespace HelpDesk.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<ActionResult> ChangePassword(ChangePasswordVM model)
         {
             try
@@ -337,7 +343,7 @@ namespace HelpDesk.Web.Controllers
                 {
                     var emailService = new EmailService();
                     var body = $"Merhaba <b>{user.Name} {user.Surname}</b><br>Hesabınızın şifresi değiştirilmiştir. <br> Bilginiz dahilinde olmayan değişiklikler için hesabınızı güvence altına almanızı öneririz.</p>";
-                    emailService.Send(new MailModel() { Body = body, Subject = "Şifre Değiştirme hk." }, user.Email);
+                    emailService.Send(new EmailModel() { Body = body, Subject = "Şifre Değiştirme hk." }, user.Email);
 
                     return RedirectToAction("Logout", "Account");
                 }
@@ -363,6 +369,104 @@ namespace HelpDesk.Web.Controllers
                 };
                 return RedirectToAction("Error500", "Home");
             }
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public ActionResult RecoverPassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [AllowAnonymous]
+        public async Task<ActionResult> RecoverPassword(RecoverPasswordVM model)
+        {
+            //try
+            //{
+            //    var user =await _membershipTools.UserManager.FindByEmailAsync(model.Email);
+            //    var userManager = NewUserManager();
+
+            //    if (user == null)
+            //    {
+            //        ModelState.AddModelError(string.Empty, $"{model.Email} mail adresine kayıtlı bir üyeliğe erişilemedi");
+            //        return View(model);
+            //    }
+
+            //    var newPassword = StringHelpers.GetCode().Substring(0, 6);
+            //    await _membershipTools.UserManager.ResetPasswordAsync(user,_membershipTools.UserManager.GeneratePasswordResetTokenAsync(user),
+            //        _membershipTools.UserManager.PasswordHasher.HashPassword(user, newPassword));
+
+            //    await _membershipTools.UserManager.RemovePasswordAsync(user);
+            //    await _membershipTools.UserManager.AddPasswordAsync(
+            //        _membershipTools.UserManager.PasswordHasher.HashPassword(newPassword));
+
+            //    //await userStore.SetPasswordHashAsync(user, userManager.PasswordHasher.HashPassword(newPassword));
+            //    var result = _membershipTools.DbContext.SaveChanges();
+            //    if (result == 0)
+            //    {
+            //        TempData["Message"] = new ErrorVM()
+            //        {
+            //            Text = $"Bir hata oluştu",
+            //            ActionName = "RecoverPassword",
+            //            ControllerName = "Account",
+            //            ErrorCode = 500
+            //        };
+            //        return RedirectToAction("Error500", "Home");
+            //    }
+
+            //    var emailService = new EmailService();
+            //    var body = $"Merhaba <b>{user.Name} {user.Surname}</b><br>Hesabınızın parolası sıfırlanmıştır<br> Yeni parolanız: <b>{newPassword}</b> <p>Yukarıdaki parolayı kullanarak sitemize giriş yapabilirsiniz.</p>";
+            //    emailService.Send(new EmailModel() { Body = body, Subject = $"{user.UserName} Şifre Kurtarma" }, user.Email);
+            //}
+            //catch (Exception ex)
+            //{
+            //    TempData["Message"] = new ErrorVM()
+            //    {
+            //        Text = $"Bir hata oluştu {ex.Message}",
+            //        ActionName = "RecoverPassword",
+            //        ControllerName = "Account",
+            //        ErrorCode = 500
+            //    };
+            //    return RedirectToAction("Error500", "Home");
+            //}
+            //TempData["Message"] = $"{model.Email} mail adresine yeni şifre gönderildi.";
+            return View();
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public ActionResult Activation(string code)
+        {
+            try
+            {
+                var user = _membershipTools.UserManager.Users.FirstOrDefault(x => x.ActivationCode == code);
+
+                if (user != null)
+                {
+                    if (user.EmailConfirmed)
+                    {
+                        ViewBag.Message = $"<span class='alert alert-success'>Bu hesap daha önce aktive edilmiştir.</span>";
+                    }
+                    else
+                    {
+                        user.EmailConfirmed = true;
+                        _dbContext.SaveChanges();
+                        ViewBag.Message = $"<span class='alert alert-success'>Aktivasyon işleminiz başarılı</span>";
+                    }
+                }
+                else
+                {
+                    ViewBag.Message = $"<span class='alert alert-danger'>Aktivasyon başarısız</span>";
+                }
+            }
+            catch (Exception)
+            {
+                ViewBag.Message = "<span class='alert alert-danger'>Aktivasyon işleminde bir hata oluştu</span>";
+            }
+
+            return View();
         }
     }
 }
