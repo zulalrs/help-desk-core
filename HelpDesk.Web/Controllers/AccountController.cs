@@ -192,8 +192,7 @@ namespace HelpDesk.Web.Controllers
         public async Task<ActionResult> Logout()
         {
             await _membershipTools.SignInManager.SignOutAsync();
-            //return RedirectToAction("Index", "Home");
-            return RedirectToAction("Login", "Account");
+            return RedirectToAction("Index", "Home");
         }
 
         [HttpGet]

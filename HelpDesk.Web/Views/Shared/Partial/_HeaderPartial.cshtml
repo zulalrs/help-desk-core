@@ -88,11 +88,9 @@
                     <li class="dropdown user-dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><img src=@(await MembershipTool.GetAvatarPath(null)) alt="Profil Fotoğrafı" class="img-circle"></a>
                         <ul class="dropdown-menu">
-                            <li><a href="@Url.Action("Index","Home")">Profil</a></li>
-                            <li><a href="#">Takvim</a></li>
-                            <li><a href="#"><span class="badge pull-right badge-danger">42</span>Mesajlar</a></li>
+                            <li><a href="@Url.Action("UserProfile","Account")">Profil</a></li>
                             <li role="separator" class="divider"></li>
-                            <li><a href="#">Hesap Ayarları</a></li>
+                            <li><a href="@Url.Action("ChangePassword","Account")">Hesap Ayarları</a></li>
                             <li><a href="@Url.Action("Logout","Account")">Çıkış Yap</a></li>
                         </ul>
                     </li>

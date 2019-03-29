@@ -112,7 +112,7 @@ namespace HelpDesk.BLL.Account
                 var id = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 if (string.IsNullOrEmpty(id))
                 {
-                    return "/wwwroot/assets/images/icon-noprofile.png";
+                    return "~/assets/images/icon-noprofile.png";
                 }
 
                 user = await _userManager.FindByIdAsync(id);
@@ -122,7 +122,7 @@ namespace HelpDesk.BLL.Account
                 user = await _userManager.FindByIdAsync(userId);
                 if (user == null)
                 {
-                    return "/wwwroot/assets/images/icon-noprofile.png";
+                    return "~/assets/images/icon-noprofile.png";
                 }
             }
 
