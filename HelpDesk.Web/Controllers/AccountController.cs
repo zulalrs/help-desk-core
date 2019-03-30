@@ -382,55 +382,56 @@ namespace HelpDesk.Web.Controllers
         [AllowAnonymous]
         public async Task<ActionResult> RecoverPassword(RecoverPasswordVM model)
         {
-            //try
-            //{
-            //    var user =await _membershipTools.UserManager.FindByEmailAsync(model.Email);
-            //    var userManager = NewUserManager();
+            try
+            {
+                var user = await _membershipTools.UserManager.FindByEmailAsync(model.Email);
 
-            //    if (user == null)
-            //    {
-            //        ModelState.AddModelError(string.Empty, $"{model.Email} mail adresine kayıtlı bir üyeliğe erişilemedi");
-            //        return View(model);
-            //    }
+                if (user == null)
+                {
+                    ModelState.AddModelError(string.Empty, $"{model.Email} mail adresine kayıtlı bir üyeliğe erişilemedi");
+                    return View(model);
+                }
 
-            //    var newPassword = StringHelpers.GetCode().Substring(0, 6);
-            //    await _membershipTools.UserManager.ResetPasswordAsync(user,_membershipTools.UserManager.GeneratePasswordResetTokenAsync(user),
-            //        _membershipTools.UserManager.PasswordHasher.HashPassword(user, newPassword));
+                var newPassword = StringHelpers.GetCode().Substring(0, 6);
 
-            //    await _membershipTools.UserManager.RemovePasswordAsync(user);
-            //    await _membershipTools.UserManager.AddPasswordAsync(
-            //        _membershipTools.UserManager.PasswordHasher.HashPassword(newPassword));
+                await _membershipTools.UserManager.RemovePasswordAsync(user);
+                await _membershipTools.UserManager.AddPasswordAsync(user,
+                    _membershipTools.UserManager.PasswordHasher.HashPassword(user, newPassword));
+                
+                //var token=await _membershipTools.UserManager.GeneratePasswordResetTokenAsync(user); 
+                //await _membershipTools.UserManager.ResetPasswordAsync(user, token, newPassword);
 
-            //    //await userStore.SetPasswordHashAsync(user, userManager.PasswordHasher.HashPassword(newPassword));
-            //    var result = _membershipTools.DbContext.SaveChanges();
-            //    if (result == 0)
-            //    {
-            //        TempData["Message"] = new ErrorVM()
-            //        {
-            //            Text = $"Bir hata oluştu",
-            //            ActionName = "RecoverPassword",
-            //            ControllerName = "Account",
-            //            ErrorCode = 500
-            //        };
-            //        return RedirectToAction("Error500", "Home");
-            //    }
+                _dbContext.SaveChanges();
 
-            //    var emailService = new EmailService();
-            //    var body = $"Merhaba <b>{user.Name} {user.Surname}</b><br>Hesabınızın parolası sıfırlanmıştır<br> Yeni parolanız: <b>{newPassword}</b> <p>Yukarıdaki parolayı kullanarak sitemize giriş yapabilirsiniz.</p>";
-            //    emailService.Send(new EmailModel() { Body = body, Subject = $"{user.UserName} Şifre Kurtarma" }, user.Email);
-            //}
-            //catch (Exception ex)
-            //{
-            //    TempData["Message"] = new ErrorVM()
-            //    {
-            //        Text = $"Bir hata oluştu {ex.Message}",
-            //        ActionName = "RecoverPassword",
-            //        ControllerName = "Account",
-            //        ErrorCode = 500
-            //    };
-            //    return RedirectToAction("Error500", "Home");
-            //}
-            //TempData["Message"] = $"{model.Email} mail adresine yeni şifre gönderildi.";
+                if (_dbContext.SaveChanges()>0)
+                {
+                    TempData["Message"] = new ErrorVM()
+                    {
+                        Text = $"Bir hata oluştu",
+                        ActionName = "RecoverPassword",
+                        ControllerName = "Account",
+                        ErrorCode = 500
+                    };
+                    return RedirectToAction("Error500", "Home");
+                }
+
+                var emailService = new EmailService();
+                var body = $"Merhaba <b>{user.Name} {user.Surname}</b><br>Hesabınızın parolası sıfırlanmıştır<br> Yeni parolanız: <b>{newPassword}</b> <p>Yukarıdaki parolayı kullanarak sitemize giriş yapabilirsiniz.</p>";
+                emailService.Send(new EmailModel() { Body = body, Subject = $"{user.UserName} Şifre Kurtarma" }, user.Email);
+            }
+            
+            catch (Exception ex)
+            {
+                TempData["Message"] = new ErrorVM()
+                {
+                    Text = $"Bir hata oluştu {ex.Message}",
+                    ActionName = "RecoverPassword",
+                    ControllerName = "Account",
+                    ErrorCode = 500
+                };
+                return RedirectToAction("Error500", "Home");
+            }
+            TempData["Message"] = $"{model.Email} mail adresine yeni şifre gönderildi.";
             return View();
         }
 
