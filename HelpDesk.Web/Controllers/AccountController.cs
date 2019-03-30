@@ -75,7 +75,6 @@ namespace HelpDesk.Web.Controllers
             }
             try
             {
-
                 var user = await _membershipTools.UserManager.FindByNameAsync(model.UserName);
                 if (user != null)
                 {
@@ -114,12 +113,13 @@ namespace HelpDesk.Web.Controllers
                             break;
                     }
 
-                    //string SiteUrl = Request.Url.Scheme + System.Uri.SchemeDelimiter + Request.Url.Host +
-                    //                 (Request.Url.IsDefaultPort ? "" : ":" + Request.Url.Port);
+                    var uri = new UriBuilder();
+                    var hostComponents = Request.Host.ToUriComponent().Split(':');
+                    string SiteUrl = uri.Scheme + System.Uri.SchemeDelimiter + uri.Scheme + hostComponents;
 
-                    //var emailService = new EmailService();
-                    //var body = $"Merhaba <b>{newUser.Name} {newUser.Surname}</b><br>Hesabınızı aktif etmek için aşağıdaki linke tıklayınız<br> <a href='{SiteUrl}/account/activation?code={newUser.ActivationCode}' >Aktivasyon Linki </a> ";
-                    //await emailService.SendAsync(new MailModel() { Body = body, Subject = "Sitemize Hoşgeldiniz" }, newUser.Email);
+                    var emailService = new EmailService();
+                    var body = $"Merhaba <b>{newUser.Name} {newUser.Surname}</b><br>Hesabınızı aktif etmek için aşağıdaki linke tıklayınız<br> <a href='{SiteUrl}/account/activation?code={newUser.ActivationCode}' >Aktivasyon Linki </a> ";
+                    await emailService.SendAsync(new EmailModel() { Body = body, Subject = "Sitemize Hoşgeldiniz" }, newUser.Email);
                 }
                 else
                 {
@@ -397,13 +397,13 @@ namespace HelpDesk.Web.Controllers
                 await _membershipTools.UserManager.RemovePasswordAsync(user);
                 await _membershipTools.UserManager.AddPasswordAsync(user,
                     _membershipTools.UserManager.PasswordHasher.HashPassword(user, newPassword));
-                
+
                 //var token=await _membershipTools.UserManager.GeneratePasswordResetTokenAsync(user); 
                 //await _membershipTools.UserManager.ResetPasswordAsync(user, token, newPassword);
 
                 _dbContext.SaveChanges();
 
-                if (_dbContext.SaveChanges()>0)
+                if (_dbContext.SaveChanges() > 0)
                 {
                     TempData["Message"] = new ErrorVM()
                     {
@@ -419,7 +419,7 @@ namespace HelpDesk.Web.Controllers
                 var body = $"Merhaba <b>{user.Name} {user.Surname}</b><br>Hesabınızın parolası sıfırlanmıştır<br> Yeni parolanız: <b>{newPassword}</b> <p>Yukarıdaki parolayı kullanarak sitemize giriş yapabilirsiniz.</p>";
                 emailService.Send(new EmailModel() { Body = body, Subject = $"{user.UserName} Şifre Kurtarma" }, user.Email);
             }
-            
+
             catch (Exception ex)
             {
                 TempData["Message"] = new ErrorVM()

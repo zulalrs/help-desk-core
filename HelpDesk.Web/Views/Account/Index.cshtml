@@ -1,4 +1,4 @@
-﻿@*@using HelpDesk.BLL.Account*@
+﻿@*@inject HelpDesk.BLL.Account.MembershipTools*@
 @model HelpDesk.Models.ViewModels.UserProfileVM
 @{
     ViewData["Title"] = "Kullanıcı Detay";
@@ -8,40 +8,40 @@
 <div class="col-md-6 col-md-offset-3">
     <table id="user" class="table table-bordered table-striped" style="clear: both">
         <tbody>
-            @*<tr>
+            <tr>
                     <td style="width: 35%;font-weight: bold"></td>
                     <td style="width: 65%;"><img src="@Model.AvatarPath" style="width: 200px; height: 200px;" /></td>
-                </tr>*@
-            @*<tr>
+                </tr>
+            <tr>
                 <td style="width: 35%;font-weight: bold">Adı Soyadı</td>
                 <td style="width: 65%;">@Model.Name @Model.Surname</td>
-            </tr>*@
+            </tr>
             <tr>
                 <td style="width: 35%;font-weight: bold">Kullanıcı Adı</td>
-                <td style="width: 65%;">@(Model?.UserName??"aysenur")</td>
+                <td style="width: 65%;">@(Model.UserName)</td>
             </tr>
-            @*<tr>
+            <tr>
                 <td style="width: 35%;font-weight: bold">Email</td>
                 <td style="width: 65%;">@Model.Email</td>
-            </tr>*@
+            </tr>
             @*<tr>
                     <td style="width: 35%;font-weight: bold">Konum</td>
                     <td style="width: 65%;">@Model.Location</td>
                 </tr>*@
             <tr>
                 <td style="width: 35%;font-weight: bold">Telefon Numarası</td>
-                <td style="width: 65%;">@(Model?.PhoneNumber??"000")</td>
+                <td style="width: 65%;">@(Model.PhoneNumber)</td>
             </tr>
             <tr>
                 <td style="width: 35%;font-weight: bold">Kayıt Tarihi</td>
-                <td style="width: 65%;">@(Model?.RegisterDate??DateTime.Now)</td>
+                <td style="width: 65%;">@(Model.RegisterDate)</td>
             </tr>
         </tbody>
     </table>
     <div class="form-group">
-        @*<div class="col-md-6 col-md-offset-3">
+        <div class="col-md-6 col-md-offset-3">
                 <a href="@Url.Action("UserProfile", "Account")" class="btn btn-instagram btn-block">Profili Güncelle</a>
-                <a href="@Url.Action("Index", "Issue")" class="btn btn-google btn-block">Aktif Kayıtlar(@(MembershipTools.GetIssueCount()))</a>
-            </div>*@
+                <a href="@Url.Action("Index", "Issue")" class="btn btn-google btn-block">Aktif Kayıtlar</a>@*(@(MembershipTools.GetIssueCount()))</a>*@
+            </div>
     </div>
 </div>
