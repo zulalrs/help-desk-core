@@ -4,7 +4,7 @@ using System.Text;
 
 namespace HelpDesk.Models.ViewModels
 {
-    public class MailModel
+    public class EmailModel
     {
         public string Body { get; set; }
         public string Subject { get; set; }
