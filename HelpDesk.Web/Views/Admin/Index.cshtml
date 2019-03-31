@@ -1,0 +1,52 @@
+﻿@model List<HelpDesk.Models.IdentityEntities.ApplicationUser>
+@using HelpDesk.BLL.Account
+@inject MembershipTools MembershipTool
+@{
+    ViewData["Title"] = "Kayıtlı Kullanıcılar";
+}
+
+<link href="~/assets/plugins/datatables/css/jquery.datatables.min.css" rel="stylesheet" />
+<table class="table table-bordered table-vcenter dataTable">
+    <thead>
+        <tr>
+            <th class="text-center">#</th>
+            <th>Fotoğraf</th>
+            <th>Kullanıcı Adı</th>
+            <th>Rol</th>
+            <th>Ad Soyad</th>
+            <th>Email</th>
+            <th>Onaylı Mı?</th>
+            <th class="text-center" style="width: 10%;">Aksiyon</th>
+        </tr>
+    </thead>
+    <tbody>
+        @for (int i = 0; i < Model.Count; i++)
+        {
+            var data = Model[i];
+            <tr class="@(data.EmailConfirmed?"":"bg-red")">
+                <td class="text-center">@(i + 1)</td>
+                <td class="text-center">
+                    <img src="@(string.IsNullOrEmpty(data.AvatarPath)?"/assets/images/icon-noprofile.png":data.AvatarPath)" class="img-avatar-96" width="100" height="100" />
+                </td>
+                <td class="font-500">@data.UserName</td>
+                <td>@(await MembershipTool.GetRole(data.Id))</td>
+                <td>@(await MembershipTool.GetNameSurname(data.Id))</td>
+                <td>@data.Email</td>
+                <td>@Html.CheckBox("EmailConfirm", data.EmailConfirmed, new { disabled = "true" })</td>
+                <td class="text-center">
+                    @*<div class="btn-group">
+                        <button class="btn btn-xs btn-default btnsendcode" name="@data.Id" type="button" title="Aktivasyon Kodu Gönder">
+                            <i class="fa fa-send" aria-hidden="true"></i>
+                        </button>
+                        <button class="btn btn-xs btn-default btnsendpassword" name="@data.Id" type="button" title="Şifre Gönder">
+                            <i class="fa fa-briefcase" aria-hidden="true"></i>
+                        </button>
+                        <a href="@Url.Action("EditUser", "Admin", new {id = data.Id})" class="btn btn-xs btn-default" title="Kullanıcı Düzenle">
+                            <i class="fa fa-pencil" aria-hidden="true"></i>
+                        </a>
+                    </div>*@
+                </td>
+            </tr>
+        }
+
+</table>

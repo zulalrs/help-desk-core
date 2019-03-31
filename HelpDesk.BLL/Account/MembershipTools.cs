@@ -40,6 +40,33 @@ namespace HelpDesk.BLL.Account
             get { return _httpContextAccessor; }
         }
 
+        public async Task<string> GetRole(string userId)
+        {
+            ApplicationUser user;
+            string role = "";
+            if (string.IsNullOrEmpty(userId))
+            {
+                var id = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (string.IsNullOrEmpty(id))
+                    return "";
+
+                user = await UserManager.FindByIdAsync(id);
+
+            }
+            else
+            {
+                user =UserManager.FindByIdAsync(userId).Result;
+                var roles = UserManager.GetRolesAsync(user).Result;
+                ApplicationRole roleuser;
+                foreach (var item in roles)
+                {
+                    roleuser = RoleManager.FindByNameAsync(item).Result;
+                    role=roleuser.ToString();
+                }
+            }
+
+            return $"{role}";
+        }
         public async Task<string> GetNameSurname(string userId)
         {
             ApplicationUser user;
