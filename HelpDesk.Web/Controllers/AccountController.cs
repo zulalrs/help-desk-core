@@ -112,11 +112,14 @@ namespace HelpDesk.Web.Controllers
                             await _membershipTools.UserManager.AddToRoleAsync(newUser, "Customer");
                             break;
                     }
-
-                    var uri = new UriBuilder();
-                    var hostComponents = Request.Host.ToUriComponent().Split(':');
-                    string SiteUrl = uri.Scheme + System.Uri.SchemeDelimiter + uri.Scheme + hostComponents;
-
+                    
+                    var uri = new UriBuilder()
+                    {
+                        Scheme = Uri.UriSchemeHttps
+                    };
+                    var hostComponents = Request.Host.ToUriComponent();
+                    string SiteUrl = uri.Scheme + System.Uri.SchemeDelimiter + hostComponents;
+                    
                     var emailService = new EmailService();
                     var body = $"Merhaba <b>{newUser.Name} {newUser.Surname}</b><br>Hesabınızı aktif etmek için aşağıdaki linke tıklayınız<br> <a href='{SiteUrl}/account/activation?code={newUser.ActivationCode}' >Aktivasyon Linki </a> ";
                     await emailService.SendAsync(new EmailModel() { Body = body, Subject = "Sitemize Hoşgeldiniz" }, newUser.Email);

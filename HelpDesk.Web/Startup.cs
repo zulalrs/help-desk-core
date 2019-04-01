@@ -3,6 +3,7 @@ using AutoMapper;
 using HelpDesk.BLL.Account;
 using HelpDesk.BLL.Repository;
 using HelpDesk.BLL.Repository.Abstracts;
+using HelpDesk.BLL.Services.Senders;
 using HelpDesk.DAL;
 using HelpDesk.Models.Entities;
 using HelpDesk.Models.IdentityEntities;
@@ -78,7 +79,6 @@ namespace HelpDesk.Web
             });
 
             services.AddScoped<MembershipTools, MembershipTools>();
-            //services.AddScoped<IUserStore<ApplicationUser>, UserStore<ApplicationUser>>();
 
             services.AddScoped<IRepository<Issue, string>, IssueRepo>();
             services.AddScoped<IRepository<IssueLog, string>, IssueLogRepo>();
@@ -86,7 +86,7 @@ namespace HelpDesk.Web
             services.AddScoped<IRepository<Survey, string>, SurveyRepo>();
 
             services.AddAutoMapper();
-
+            
             Mapper.Initialize(ProfileUserMapping);
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
