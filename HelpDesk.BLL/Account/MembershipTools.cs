@@ -46,7 +46,7 @@ namespace HelpDesk.BLL.Account
             get { return _httpContextAccessor; }
         }
         public UserStore<ApplicationUser> NewUserStore() => new UserStore<ApplicationUser>(_db ?? new MyContext());
-
+        public RoleStore<ApplicationRole> NewRoleStore() => new RoleStore<ApplicationRole>(_db ?? new MyContext());
         public async Task<string> GetRole(string userId)
         {
             ApplicationUser user;

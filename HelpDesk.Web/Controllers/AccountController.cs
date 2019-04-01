@@ -25,7 +25,7 @@ namespace HelpDesk.Web.Controllers
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly MembershipTools _membershipTools;
 
-        public AccountController(MembershipTools membershipTools, IHostingEnvironment hostingEnvironment)
+        public AccountController(MembershipTools membershipTools, IHostingEnvironment hostingEnvironment):base(membershipTools)
         {
 
             _membershipTools = membershipTools;
