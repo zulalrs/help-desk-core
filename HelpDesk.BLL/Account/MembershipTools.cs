@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using HelpDesk.DAL;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace HelpDesk.BLL.Account
 {
@@ -16,14 +18,17 @@ namespace HelpDesk.BLL.Account
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public MembershipTools(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, SignInManager<ApplicationUser> signInManager, IHttpContextAccessor httpContextAccessor)
+        private readonly MyContext _db;
+
+        public MembershipTools(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, SignInManager<ApplicationUser> signInManager, IHttpContextAccessor httpContextAccessor, MyContext db)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _signInManager = signInManager;
             _httpContextAccessor = httpContextAccessor;
+            _db = db;
         }
-
+        
         public UserManager<ApplicationUser> UserManager
         {
             get { return _userManager; }
@@ -40,6 +45,7 @@ namespace HelpDesk.BLL.Account
         {
             get { return _httpContextAccessor; }
         }
+        public UserStore<ApplicationUser> NewUserStore() => new UserStore<ApplicationUser>(_db ?? new MyContext());
 
         public async Task<string> GetRole(string userId)
         {
@@ -56,13 +62,13 @@ namespace HelpDesk.BLL.Account
             }
             else
             {
-                user =UserManager.FindByIdAsync(userId).Result;
+                user = UserManager.FindByIdAsync(userId).Result;
                 var roles = UserManager.GetRolesAsync(user).Result;
                 ApplicationRole roleuser;
                 foreach (var item in roles)
                 {
                     roleuser = RoleManager.FindByNameAsync(item).Result;
-                    role=roleuser.ToString();
+                    role = roleuser.ToString();
                 }
             }
 

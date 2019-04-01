@@ -16,6 +16,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using HelpDesk.DAL;
 using EmailService = HelpDesk.BLL.Services.Senders.EmailService;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace HelpDesk.Web.Controllers
 {
@@ -23,13 +24,12 @@ namespace HelpDesk.Web.Controllers
     {
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly MembershipTools _membershipTools;
-        private readonly MyContext _dbContext;
 
-        public AccountController(MembershipTools membershipTools, IHostingEnvironment hostingEnvironment, MyContext dbContext)
+        public AccountController(MembershipTools membershipTools, IHostingEnvironment hostingEnvironment)
         {
+
             _membershipTools = membershipTools;
             _hostingEnvironment = hostingEnvironment;
-            _dbContext = dbContext;
 
             var roleNames = Enum.GetNames(typeof(IdentityRoles));
             foreach (var roleName in roleNames)
@@ -384,7 +384,10 @@ namespace HelpDesk.Web.Controllers
         {
             try
             {
-                var user = await _membershipTools.UserManager.FindByEmailAsync(model.Email);
+                var userStore = _membershipTools.NewUserStore();
+                var userManager = _membershipTools.UserManager;
+
+                var user = await userStore.FindByEmailAsync(model.Email);
 
                 if (user == null)
                 {
@@ -392,18 +395,14 @@ namespace HelpDesk.Web.Controllers
                     return View(model);
                 }
 
-                var newPassword = StringHelpers.GetCode().Substring(0, 6);
+                var newPassword = StringHelpers.GetCode().Substring(0, 6) + "A0*";
+                var hashPassword = userManager.PasswordHasher.HashPassword(user, newPassword);
 
-                await _membershipTools.UserManager.RemovePasswordAsync(user);
-                await _membershipTools.UserManager.AddPasswordAsync(user,
-                    _membershipTools.UserManager.PasswordHasher.HashPassword(user, newPassword));
+                await userStore.SetPasswordHashAsync(user, hashPassword);
 
-                //var token=await _membershipTools.UserManager.GeneratePasswordResetTokenAsync(user); 
-                //await _membershipTools.UserManager.ResetPasswordAsync(user, token, newPassword);
+                var result = userStore.Context.SaveChanges();
 
-                _dbContext.SaveChanges();
-
-                if (_dbContext.SaveChanges() > 0)
+                if (result == 0)
                 {
                     TempData["Message"] = new ErrorVM()
                     {
@@ -452,7 +451,7 @@ namespace HelpDesk.Web.Controllers
                     else
                     {
                         user.EmailConfirmed = true;
-                        _dbContext.SaveChanges();
+                        _membershipTools.NewUserStore().Context.SaveChanges();
                         ViewBag.Message = $"<span class='alert alert-success'>Aktivasyon işleminiz başarılı</span>";
                     }
                 }

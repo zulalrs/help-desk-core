@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace HelpDesk.Web
 {
@@ -77,10 +78,11 @@ namespace HelpDesk.Web
             });
 
             services.AddScoped<MembershipTools, MembershipTools>();
+            //services.AddScoped<IUserStore<ApplicationUser>, UserStore<ApplicationUser>>();
 
-            services.AddScoped<IRepository<Issue,string>,IssueRepo>();
+            services.AddScoped<IRepository<Issue, string>, IssueRepo>();
             services.AddScoped<IRepository<IssueLog, string>, IssueLogRepo>();
-            services.AddScoped<IRepository<Photograph,string>,PhotographRepo>();
+            services.AddScoped<IRepository<Photograph, string>, PhotographRepo>();
             services.AddScoped<IRepository<Survey, string>, SurveyRepo>();
 
             services.AddAutoMapper();

@@ -9,6 +9,11 @@ namespace HelpDesk.DAL
 {
     public class MyContext : IdentityDbContext<ApplicationUser, ApplicationRole, string>
     {
+
+        public MyContext()
+        {
+        }
+
         public MyContext(DbContextOptions<MyContext> options)
             : base(options)
         {
