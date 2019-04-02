@@ -247,35 +247,36 @@ namespace HelpDesk.Web.Controllers
             }
 
 
-            //if (model.PostedFile != null &&
-            //       model.PostedFile.Length > 0)
-            //{
-            //    var file = model.PostedFile;
-            //    string fileName = Path.GetFileNameWithoutExtension(file.FileName);
-            //    string extName = Path.GetExtension(file.FileName);
-            //    fileName = StringHelpers.UrlFormatConverter(fileName);
-            //    fileName += StringHelpers.GetCode();
-            //    var directorypath = Server.MapPath("~/Upload/");
-            //    var filepath = Server.MapPath("~/Upload/") + fileName + extName;
+            if (model.PostedFile != null &&
+                   model.PostedFile.Length > 0)
+            {
+                //var file = model.PostedFile;
+                //string fileName = Path.GetFileNameWithoutExtension(file.FileName);
+                //string extName = Path.GetExtension(file.FileName);
+                //fileName = StringHelpers.UrlFormatConverter(fileName);
+                //fileName += StringHelpers.GetCode();
+                //_hostingEnvironment.ContentRootPath = "~/Upload/";
+                //var directorypath =Server.MapPath("~/Upload/");
+                //var filepath = Server.MapPath("~/Upload/") + fileName + extName;
 
-            //    if (!Directory.Exists(directorypath))
-            //    {
-            //        Directory.CreateDirectory(directorypath);
-            //    }
+                //if (!Directory.Exists(directorypath))
+                //{
+                //    Directory.CreateDirectory(directorypath);
+                //}
 
-            //    file.SaveAs(filepath);
+                //file..SaveAs(filepath);
 
-            //    WebImage img = new WebImage(filepath);
-            //    img.Resize(250, 250, false);
-            //    img.AddTextWatermark("TeknikServis");
-            //    img.Save(filepath);
-            //    var oldPath = user.AvatarPath;
-            //    if (oldPath != "/assets/images/icon-noprofile.png")
-            //    {
-            //        System.IO.File.Delete(Server.MapPath(oldPath));
-            //    }
-            //    user.AvatarPath = "/Upload/" + fileName + extName;
-            //}
+                //WebImage img = new WebImage(filepath);
+                //img.Resize(250, 250, false);
+                //img.AddTextWatermark("TeknikServis");
+                //img.Save(filepath);
+                //var oldPath = user.AvatarPath;
+                //if (oldPath != "/assets/images/icon-noprofile.png")
+                //{
+                //    System.IO.File.Delete(Server.MapPath(oldPath));
+                //}
+                //user.AvatarPath = "/Upload/" + fileName + extName;
+            }
 
             try
             {

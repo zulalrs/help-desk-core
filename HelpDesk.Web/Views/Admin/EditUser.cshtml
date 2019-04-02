@@ -6,44 +6,43 @@
 <link rel="stylesheet" href="~/assets/plugins/select2/select2.min.css" />
 <link rel="stylesheet" href="~/assets/plugins/select2/select2-bootstrap.css" />
 
-@using (Html.BeginForm())
-{
+<form asp-controller="Admin" asp-action="EditUser" method="post">
     <hr />
     <div class="form-horizontal col-md-10 col-md-offset-3">
 
-        <h3 style="color:forestgreen">@TempData["Message"]</h3>
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        @Html.HiddenFor(model => model.Id)
+        <h3 style="color:forestgreen">@(TempData["Message"] as string)</h3>
+        <div asp-validation-summary="All" class="text-danger"></div>
+        <input type="hidden" asp-for="Id" />
 
         <div class="form-group">
-            @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
+            <label asp-for="Name" class="control-label col-md-2"></label>
             <div class="col-md-4">
-                @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                <input type="text" asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
             </div>
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.Surname, htmlAttributes: new { @class = "control-label col-md-2" })
+            <label asp-for="Surname" class="control-label col-md-2"></label>
             <div class="col-md-4">
-                @Html.EditorFor(model => model.Surname, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Surname, "", new { @class = "text-danger" })
+                <input type="text" asp-for="Surname" class="form-control" />
+                <span asp-validation-for="Surname" class="text-danger"></span>
             </div>
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label col-md-2" })
+            <label asp-for="Email" class="control-label col-md-2"></label>
             <div class="col-md-4">
-                @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+                <input type="email" asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
             </div>
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.PhoneNumber, htmlAttributes: new { @class = "control-label col-md-2" })
+            <label asp-for="PhoneNumber" class="control-label col-md-2"></label>
             <div class="col-md-4">
-                @Html.EditorFor(model => model.PhoneNumber, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.PhoneNumber, "", new { @class = "text-danger" })
+                <input type="email" asp-for="PhoneNumber" class="form-control" />
+                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
             </div>
         </div>
 
@@ -53,20 +52,19 @@
             </div>
         </div>
     </div>
-}
+</form>
 
 <div class="form-group ">
-    @using (Html.BeginForm("EditUserRoles", "Admin", FormMethod.Post))
-    {
-        @Html.AntiForgeryToken()
-        @Html.HiddenFor(x => x.Id)
+    <form asp-controller="Admin" asp-action="EditUserRoles" method="post">
+
+        <input type="hidden" asp-for="Id" />
         <div class="col-md-5 col-md-offset-3">
             @Html.DropDownList("Roles", (List<SelectListItem>)ViewBag.RoleList, new { @class = "js-select2 form-control col-md-offset-4", size = "1", multiple = "multiple", @style = "width:345px; height:100px;" })
             <br />
             <input type="submit" value="Rolü Güncelle" class="btn btn-google col-md-offset-4 col-md-8" />
         </div>
 
-    }
+    </form>
 </div>
 
 <script src="~/assets/plugins/select2/select2.full.min.js"></script>
