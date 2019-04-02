@@ -85,11 +85,13 @@ namespace HelpDesk.Web
             services.AddScoped<IRepository<Photograph, string>, PhotographRepo>();
             services.AddScoped<IRepository<Survey, string>, SurveyRepo>();
 
-            services.AddAutoMapper();
-            
-            Mapper.Initialize(ProfileUserMapping);
+           
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddAutoMapper();
+
+            Mapper.Initialize(ProfileUserMapping);
+            Mapper.Initialize(IssueMapping);
         }
 
         private void ProfileUserMapping(IMapperConfigurationExpression cfg)
@@ -97,6 +99,12 @@ namespace HelpDesk.Web
             cfg.CreateMap<ApplicationUser, UserProfileVM>()
                 .ForMember(dest => dest.AvatarPath, opt => opt.MapFrom((s, d) => s.AvatarPath ?? "/assets/images/icon-noprofile.png"))
                 .ReverseMap();
+        }
+        private void IssueMapping(IMapperConfigurationExpression cfg)
+        {
+            cfg.CreateMap<Issue, IssueVM>()
+                 .ForMember(dest => dest.IssueId, opt => opt.MapFrom(x => x.Id))
+                 .ReverseMap();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

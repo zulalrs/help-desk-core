@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using HelpDesk.BLL.Account;
+﻿using HelpDesk.BLL.Account;
 using HelpDesk.BLL.Helpers;
 using HelpDesk.BLL.Services.Senders;
 using HelpDesk.Models.Models;
 using HelpDesk.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace HelpDesk.Web.Controllers
 {

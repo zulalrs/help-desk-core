@@ -1,23 +1,17 @@
 ﻿using HelpDesk.BLL.Account;
 using HelpDesk.BLL.Helpers;
-using HelpDesk.BLL.Services.Senders;
 using HelpDesk.Models.Enums;
 using HelpDesk.Models.IdentityEntities;
 using HelpDesk.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.IO;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
-using HelpDesk.DAL;
 using EmailService = HelpDesk.BLL.Services.Senders.EmailService;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using System.Web.Helpers;
 
 namespace HelpDesk.Web.Controllers
 {

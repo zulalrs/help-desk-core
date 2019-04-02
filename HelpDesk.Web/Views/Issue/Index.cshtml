@@ -1,0 +1,108 @@
+﻿@using HelpDesk.BLL.Account
+@using HelpDesk.Models.Enums
+@inject MembershipTools MembershipTool
+@model List<HelpDesk.Models.ViewModels.IssueVM>
+
+@{
+    ViewData["Title"] = "Arıza Kayıt Anasayfa";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+}
+
+<div>
+    <h3 style="color:green">@(TempData["Message"] as string)</h3>
+    <h3 style="color:red">@(TempData["Message2"] as string)</h3>
+    <h3 style="color:red">@(TempData["Message3"] as string)</h3>
+    <hr />
+    <!-- Page Inner -->
+    <div class="page-inner">
+        <div id="main-wrapper">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-white">
+                        <div class="panel-body">
+                            <div class="table-responsive">
+                                <table id="example2" class="display table" style="width: 100%; mso-cellspacing: 0;">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Açıklama</th>
+                                            <th>Durum</th>
+                                            <th>Teknisyen</th>
+                                            <th>Konum</th>
+                                            <th>Aksiyon</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @for (int i = 0; i < Model.Count; i++)
+                                        {
+                                            var current = Model[i];
+                                            if (current.IssueState == IssueStates.Beklemede)
+                                            {
+                                                <tr style="background: lightgrey">
+                                                    <th>@(i + 1)</th>
+                                                    <td>@current.Description</td>
+                                                    <td>@current.IssueState</td>
+                                                    <td style="text-align:justify">@(current.TechnicianId == null ? "Teknisyen Atanmadı" : await MembershipTool.GetNameSurname(current.TechnicianId))</td>
+                                                    <td>
+                                                        @*@current.Location*@
+                                                        Location
+                                                    </td>
+                                                    <td>
+                                                        <a href="@Url.Action("Details", "Issue",new {id=current.IssueId})" class="btn btn-instagram">Detay</a>
+                                                        <a href="@Url.Action("Timeline", "Issue",new {id=current.IssueId})" class="btn btn-instagram">Çizelge</a>
+                                                    </td>
+                                                </tr>
+                                            }
+                                            if (current.IssueState == IssueStates.Atandı || current.IssueState == IssueStates.KabulEdildi || current.IssueState == IssueStates.İşlemde)
+                                            {
+                                                <tr style="background: burlywood">
+                                                    <th>@(i + 1)</th>
+                                                    <td>@current.IssueId</td>
+                                                    <td>@current.IssueState</td>
+                                                    <td style="text-align:justify">@(current.TechnicianId == null ? "Teknisyen Atanmadı" : await MembershipTool.GetNameSurname(current.TechnicianId))</td>
+                                                    <td>
+                                                        @*@current.Location*@
+                                                        Location
+                                                    </td>
+                                                    <td>
+                                                        <a href="@Url.Action("Details", "Issue",new {id=current.IssueId})" class="btn btn-instagram">Detay</a>
+                                                        <a href="@Url.Action("Timeline", "Issue",new {id=current.IssueId})" class="btn btn-instagram">Çizelge</a>
+                                                    </td>
+                                                </tr>
+                                            }
+                                            if (current.IssueState == IssueStates.Tamamlandı)
+                                            {
+                                                <tr style="background: mediumseagreen">
+                                                    <th>@(i + 1)</th>
+                                                    <td>@current.Description</td>
+                                                    <td>@current.IssueState</td>
+                                                    <td style="text-align:justify">@(current.TechnicianId == null ? "Teknisyen Atanmadı" : await MembershipTool.GetNameSurname(current.TechnicianId))</td>
+                                                    <td>
+                                                        @*@current.Location*@
+                                                        Location
+                                                    </td>
+                                                    <td>
+                                                        <a href="@Url.Action("Details", "Issue",new {id=current.IssueId})" class="btn btn-instagram">Detay</a>
+                                                        <a href="@Url.Action("Timeline", "Issue",new {id=current.IssueId})" class="btn btn-instagram">Çizelge</a>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- Row -->
+        </div><!-- Main Wrapper -->
+
+    </div><!-- /Page Inner -->
+    <div class="col-md-4">
+        <a href="@Url.Action("Create","Issue")" class="btn btn-block btn-instagram">Kayıt Oluştur</a>
+        <a href="@Url.Action("Index","Home")" class="btn btn-block btn-google">Profil Sayfası</a>
+    </div>
+</div>
+
+
