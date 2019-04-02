@@ -15,14 +15,18 @@ namespace HelpDesk.Web.Controllers
     public class AdminController : BaseController
     {
         private readonly MembershipTools _membershipTools;
+
         public AdminController(MembershipTools membershipTools):base(membershipTools)
         {
             _membershipTools = membershipTools;
         }
+
+        [HttpGet]
         public IActionResult Index()
         {
             return View(_membershipTools.UserManager.Users.ToList());
         }
+
         [HttpPost]
         public async Task<JsonResult> SendCode(string id)
         {
@@ -48,7 +52,7 @@ namespace HelpDesk.Web.Controllers
                     });
                 }
 
-                user.ActivationCode = StringHelpers.GetCode()+"A*";
+                user.ActivationCode = StringHelpers.GetCode();
                 await userStore.UpdateAsync(user);
                 userStore.Context.SaveChanges();
                 var uri = new UriBuilder()
@@ -98,7 +102,7 @@ namespace HelpDesk.Web.Controllers
                     });
                 }
 
-                var newPassword = StringHelpers.GetCode().Substring(0, 6);
+                var newPassword = StringHelpers.GetCode().Substring(0, 6)+"A0*";
                 await userStore.SetPasswordHashAsync(user, _membershipTools.UserManager.PasswordHasher.HashPassword(user, newPassword));
                 await userStore.UpdateAsync(user);
                 userStore.Context.SaveChanges();
@@ -135,13 +139,14 @@ namespace HelpDesk.Web.Controllers
         {
             try
             {
-                var user = await _membershipTools.UserManager.FindByIdAsync(id);
+                var userManager = _membershipTools.UserManager;
+                var user = await userManager.FindByIdAsync(id);
                 if (user == null)
                 {
                     return RedirectToAction("Index");
                 }
 
-                var roles = _membershipTools.UserManager.GetRolesAsync(user).Result;
+                var roles = userManager.GetRolesAsync(user).Result;
                 var roller = GetRoleList();
                 foreach (var role in roles)
                 {
@@ -155,8 +160,7 @@ namespace HelpDesk.Web.Controllers
                 }
 
                 ViewBag.RoleList = roller;
-
-
+                
                 var model = new UserProfileVM()
                 {
                     AvatarPath = user.AvatarPath,
@@ -278,7 +282,5 @@ namespace HelpDesk.Web.Controllers
 
             return RedirectToAction("EditUser", new { id = userId });
         }
-
-
     }
 }

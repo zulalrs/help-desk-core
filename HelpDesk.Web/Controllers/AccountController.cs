@@ -17,6 +17,7 @@ using System.Threading.Tasks;
 using HelpDesk.DAL;
 using EmailService = HelpDesk.BLL.Services.Senders.EmailService;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using System.Web.Helpers;
 
 namespace HelpDesk.Web.Controllers
 {
@@ -25,7 +26,7 @@ namespace HelpDesk.Web.Controllers
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly MembershipTools _membershipTools;
 
-        public AccountController(MembershipTools membershipTools, IHostingEnvironment hostingEnvironment):base(membershipTools)
+        public AccountController(MembershipTools membershipTools, IHostingEnvironment hostingEnvironment) : base(membershipTools)
         {
 
             _membershipTools = membershipTools;
@@ -112,14 +113,14 @@ namespace HelpDesk.Web.Controllers
                             await _membershipTools.UserManager.AddToRoleAsync(newUser, "Customer");
                             break;
                     }
-                    
+
                     var uri = new UriBuilder()
                     {
                         Scheme = Uri.UriSchemeHttps
                     };
                     var hostComponents = Request.Host.ToUriComponent();
                     string SiteUrl = uri.Scheme + System.Uri.SchemeDelimiter + hostComponents;
-                    
+
                     var emailService = new EmailService();
                     var body = $"Merhaba <b>{newUser.Name} {newUser.Surname}</b><br>Hesabınızı aktif etmek için aşağıdaki linke tıklayınız<br> <a href='{SiteUrl}/account/activation?code={newUser.ActivationCode}' >Aktivasyon Linki </a> ";
                     await emailService.SendAsync(new EmailModel() { Body = body, Subject = "Sitemize Hoşgeldiniz" }, newUser.Email);
@@ -240,42 +241,41 @@ namespace HelpDesk.Web.Controllers
         public async Task<ActionResult> UserProfile(UserProfileVM model)
         {
             var user = await _membershipTools.UserManager.FindByIdAsync(model.Id);
-
+            //var oldPath = user.AvatarPath;
+            //if (oldPath != null || oldPath != "")
+            //{
+            //    System.IO.File.Delete(oldPath);
+            //}
             if (!ModelState.IsValid)
             {
                 return View("UserProfile", model);
             }
 
+            if (model.PostedFile != null &&
+                   model.PostedFile.Length > 0)
+            {
+                var file = model.PostedFile;
+                string fileName = Path.GetFileNameWithoutExtension(file.FileName);
+                string extName = Path.GetExtension(file.FileName);
+                fileName = StringHelpers.UrlFormatConverter(fileName);
+                fileName += StringHelpers.GetCode();
 
-            //if (model.PostedFile != null &&
-            //       model.PostedFile.Length > 0)
-            //{
-            //    var file = model.PostedFile;
-            //    string fileName = Path.GetFileNameWithoutExtension(file.FileName);
-            //    string extName = Path.GetExtension(file.FileName);
-            //    fileName = StringHelpers.UrlFormatConverter(fileName);
-            //    fileName += StringHelpers.GetCode();
-            //    var directorypath = Server.MapPath("~/Upload/");
-            //    var filepath = Server.MapPath("~/Upload/") + fileName + extName;
+                var webpath = _hostingEnvironment.WebRootPath;
+                var directorypath = Path.Combine(webpath, "Uploads");
+                var filePath = Path.Combine(directorypath, fileName + extName);
 
-            //    if (!Directory.Exists(directorypath))
-            //    {
-            //        Directory.CreateDirectory(directorypath);
-            //    }
+                if (!Directory.Exists(directorypath))
+                {
+                    Directory.CreateDirectory(directorypath);
+                }
 
-            //    file.SaveAs(filepath);
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    await file.CopyToAsync(fileStream);
+                }
 
-            //    WebImage img = new WebImage(filepath);
-            //    img.Resize(250, 250, false);
-            //    img.AddTextWatermark("TeknikServis");
-            //    img.Save(filepath);
-            //    var oldPath = user.AvatarPath;
-            //    if (oldPath != "/assets/images/icon-noprofile.png")
-            //    {
-            //        System.IO.File.Delete(Server.MapPath(oldPath));
-            //    }
-            //    user.AvatarPath = "/Upload/" + fileName + extName;
-            //}
+                user.AvatarPath = "/Uploads/" + fileName + extName;
+            }
 
             try
             {
