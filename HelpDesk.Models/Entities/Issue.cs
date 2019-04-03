@@ -33,6 +33,7 @@ namespace HelpDesk.Models.Entities
         public ProductTypes ProductType { get; set; }
 
         [DisplayName("Fotoğraf")]
+        [NotMapped]
         public List<Photograph> PhotoPath { get; set; }
 
         [DisplayName("Güncel Durum")]

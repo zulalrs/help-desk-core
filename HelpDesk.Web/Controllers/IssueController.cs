@@ -88,7 +88,7 @@ namespace HelpDesk.Web.Controllers
                     ProductType = model.ProductType,
                     CustomerId = model.CustomerId,
                     PurchasedDate = model.PurchasedDate,
-                    //PhotoPath = model.PhotoPath,
+                    PhotoPath = model.PhotoPath,
                     ServiceCharge = model.ServiceCharge,
                     ClosedDate = model.ClosedDate,
                     CreatedDate = model.CreatedDate,
@@ -201,7 +201,8 @@ namespace HelpDesk.Web.Controllers
 
                 var fotograflar = fotorepo.GetAll(x => x.IssueId == issue.Id).ToList();
                 var foto = fotograflar.Select(x => x.Path).ToList();
-                //issue.PhotoPath = foto;
+                var list = issue.PhotoPath.Select(x => x.Path).ToList();
+                list = foto;
                 repo.Update(issue);
 
                 TempData["Message"] = "Arıza kaydınız başarı ile oluşturuldu.";

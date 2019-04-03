@@ -1,69 +1,78 @@
-﻿@model HelpDesk.Models.ViewModels.IssueVM
+﻿@using HelpDesk.Models.Enums
+@using Microsoft.AspNetCore.Http
+@using System.Security.Claims
+@inject IHttpContextAccessor HttpContextAccessor
+@model HelpDesk.Models.ViewModels.IssueVM
 @{
     ViewData["Title"] = "Create";
 }
 
-<h3 style="color:green">@TempData["Message"]</h3>
-<h3 style="color:red">@TempData["Message2"]</h3>
-<h3 style="color:red">@TempData["Message3"]</h3>
+<h3 style="color:green">@(TempData["Message"] as string)</h3>
+<h3 style="color:red">@(TempData["Message2"] as string)</h3>
+<h3 style="color:red">@(TempData["Message3"] as string)</h3>
 
-@using (Html.BeginForm("Create", "Issue", FormMethod.Post, new { @class = "form-horizontal", enctype = "multipart/form-data" }))
-{
-    @Html.AntiForgeryToken()
 
-<div class="form-horizontal">
-    <hr />
-    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-    @*@Html.Hidden("CustomerId", HttpContext.Current.User.Identity.GetUserId())*@
+<form asp-action="Create" asp-controller="Issue" method="post" class="form-horizontal" enctype="multipart/form-data">
 
-    <div class="form-group">
-        @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-4">
-            @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control input-rounded" } })
-            @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
-        </div>
-    </div>
+    <div class="form-horizontal">
+        <hr />
 
-    <div class="form-group">
-        @Html.LabelFor(model => model.ProductType, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-4">
-            @*@Html.EnumDropDownListFor(model => model.ProductType, new { @class = "form-control input-rounded" })
-                @Html.ValidationMessageFor(model => model.ProductType, "", new { @class = "text-danger" })*@
-        </div>
-    </div>
+        <div asp-validation-summary="All" class="text-danger"></div>
+        @*<input type="hidden" asp-for="CustomerId,HttpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value" />*@
+        @*@Html.Hidden("CustomerId", HttpContext.Current.User.Identity.GetUserId())*@
 
-    <div class="form-group">
-        @Html.LabelFor(model => model.PostedPhoto, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-4">
-            @Html.TextBoxFor(model => model.PostedPhoto, new { type = "file", multiple = true })
-            @Html.ValidationMessageFor(model => model.PostedPhoto, "", new { @class = "text-danger" })
-        </div>
-    </div>
-
-    @*<div class="form-group">
-            @Html.LabelFor(model => model.Location, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="form-group">
+            <label asp-for="Description" class="control-label col-md-2"></label>
             <div class="col-md-4">
-                @Html.EnumDropDownListFor(model => model.Location, new { @class = "form-control input-rounded" })
-                @Html.ValidationMessageFor(model => model.Location, "", new { @class = "text-danger" })
+                <input type="text" asp-for="Description" class="form-control input-rounded" />
+                <span asp-validation-for="Description" class="text-danger" />
             </div>
-        </div>*@
+        </div>
 
-    <div class="form-group">
-        @Html.LabelFor(model => model.PurchasedDate, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-4">
-            @Html.EditorFor(model => model.PurchasedDate, new { htmlAttributes = new { @class = "datepicker", @type = "date" } })
-            @Html.ValidationMessageFor(model => model.PurchasedDate, "", new { @class = "text-danger" })
+        <div class="form-group">
+            <label asp-for="ProductType" class="control-label col-md-2"></label>
+            <div class="col-md-4">
+                <select asp-for="ProductType" asp-items="Html.GetEnumSelectList<ProductTypes>()" class="form-control input-rounded">
+                    <option selected="selected" value="">Please select</option>
+                </select>
+                <span asp-validation-for="ProductType" class="text-danger" />
+                @*@Html.EnumDropDownListFor(model => model.ProductType, new { @class = "form-control input-rounded" })
+                    @Html.ValidationMessageFor(model => model.ProductType, "", new { @class = "text-danger" })*@
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="PostedPhoto" class="control-label col-md-2"></label>
+            <div class="col-md-4">
+                <input type="file" asp-for="PostedPhoto" multiple=true />
+                <span asp-validation-for="PostedPhoto" class="text-danger" />
+            </div>
+        </div>
+
+        @*<div class="form-group">
+                @Html.LabelFor(model => model.Location, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-4">
+                    @Html.EnumDropDownListFor(model => model.Location, new { @class = "form-control input-rounded" })
+                    @Html.ValidationMessageFor(model => model.Location, "", new { @class = "text-danger" })
+                </div>
+            </div>*@
+
+        <div class="form-group">
+            <label asp-for="PurchasedDate" class="control-label col-md-2"></label>
+            <div class="col-md-4">
+                <input asp-for="PurchasedDate" class="datepicker" type="date" />
+                <span asp-validation-for="PurchasedDate" class="text-danger" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-4">
+                <input type="submit" value="Oluştur" class="btn btn-instagram btn-block" />
+                <a asp-controller="Account" asp-action="Index" class="btn btn-block btn-google">Profil Sayfası</a>
+            </div>
         </div>
     </div>
-
-    <div class="form-group">
-        <div class="col-md-offset-2 col-md-4">
-            <input type="submit" value="Oluştur" class="btn btn-instagram btn-block" />
-            <a href="@Url.Action("Index","Home")" class="btn btn-block btn-google">Profil Sayfası</a>
-        </div>
-    </div>
-</div>
-}
+</form>
 
 <link href="~/assets/css/jquery-ui.min.css" rel="stylesheet" />
 <link href="~/assets/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet" />

@@ -33,6 +33,10 @@ namespace HelpDesk.DAL
 
             return base.SaveChanges();
         }
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+        }
 
         public virtual DbSet<Issue> Issues { get; set; }
         public virtual DbSet<IssueLog> IssueLogs { get; set; }

@@ -89,6 +89,7 @@ namespace HelpDesk.Web
 
             Mapper.Initialize(cfg => {
                 ProfileUserMapping(cfg);
+
                 IssueMapping(cfg);
             });
 
