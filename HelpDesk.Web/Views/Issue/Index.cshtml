@@ -43,31 +43,49 @@
                                                     <th>@(i + 1)</th>
                                                     <td>@current.Description</td>
                                                     <td>@current.IssueState</td>
-                                                    <td style="text-align:justify">@(current.TechnicianId == null ? "Teknisyen Atanmadı" : await MembershipTool.GetNameSurname(current.TechnicianId))</td>
+                                                    <td style="text-align:justify">
+                                                        @(current.TechnicianId == null ?
+
+"Teknisyen Atanmadı" : await MembershipTool.GetNameSurname(current.TechnicianId))
+                                                    </td>
                                                     <td>
-                                                        @*@current.Location*@
+
                                                         Location
                                                     </td>
                                                     <td>
-                                                        <a href="@Url.Action("Details", "Issue",new {id=current.IssueId})" class="btn btn-instagram">Detay</a>
-                                                        <a href="@Url.Action("Timeline", "Issue",new {id=current.IssueId})" class="btn btn-instagram">Çizelge</a>
+                                                        <a href="@Url.Action("Details", "Issue",new
+
+{id=current.IssueId})" class="btn btn-instagram">Detay</a>
+                                                        <a href="@Url.Action("Timeline", "Issue",new
+
+{id=current.IssueId})" class="btn btn-instagram">Çizelge</a>
                                                     </td>
                                                 </tr>
                                             }
-                                            if (current.IssueState == IssueStates.Atandı || current.IssueState == IssueStates.KabulEdildi || current.IssueState == IssueStates.İşlemde)
+                                            if (current.IssueState == IssueStates.Atandı || current.IssueState ==
+
+IssueStates.KabulEdildi || current.IssueState == IssueStates.İşlemde)
                                             {
                                                 <tr style="background: burlywood">
                                                     <th>@(i + 1)</th>
                                                     <td>@current.IssueId</td>
                                                     <td>@current.IssueState</td>
-                                                    <td style="text-align:justify">@(current.TechnicianId == null ? "Teknisyen Atanmadı" : await MembershipTool.GetNameSurname(current.TechnicianId))</td>
+                                                    <td style="text-align:justify">
+                                                        @(current.TechnicianId == null ?
+
+"Teknisyen Atanmadı" : await MembershipTool.GetNameSurname(current.TechnicianId))
+                                                    </td>
                                                     <td>
                                                         @*@current.Location*@
                                                         Location
                                                     </td>
                                                     <td>
-                                                        <a href="@Url.Action("Details", "Issue",new {id=current.IssueId})" class="btn btn-instagram">Detay</a>
-                                                        <a href="@Url.Action("Timeline", "Issue",new {id=current.IssueId})" class="btn btn-instagram">Çizelge</a>
+                                                        <a href="@Url.Action("Details", "Issue",new
+
+{id=current.IssueId})" class="btn btn-instagram">Detay</a>
+                                                        <a href="@Url.Action("Timeline", "Issue",new
+
+{id=current.IssueId})" class="btn btn-instagram">Çizelge</a>
                                                     </td>
                                                 </tr>
                                             }
@@ -77,14 +95,22 @@
                                                     <th>@(i + 1)</th>
                                                     <td>@current.Description</td>
                                                     <td>@current.IssueState</td>
-                                                    <td style="text-align:justify">@(current.TechnicianId == null ? "Teknisyen Atanmadı" : await MembershipTool.GetNameSurname(current.TechnicianId))</td>
+                                                    <td style="text-align:justify">
+                                                        @(current.TechnicianId == null ?
+
+"Teknisyen Atanmadı" : await MembershipTool.GetNameSurname(current.TechnicianId))
+                                                    </td>
                                                     <td>
                                                         @*@current.Location*@
                                                         Location
                                                     </td>
                                                     <td>
-                                                        <a href="@Url.Action("Details", "Issue",new {id=current.IssueId})" class="btn btn-instagram">Detay</a>
-                                                        <a href="@Url.Action("Timeline", "Issue",new {id=current.IssueId})" class="btn btn-instagram">Çizelge</a>
+                                                        <a href="@Url.Action("Details", "Issue",new
+
+{id=current.IssueId})" class="btn btn-instagram">Detay</a>
+                                                        <a href="@Url.Action("Timeline", "Issue",new
+
+{id=current.IssueId})" class="btn btn-instagram">Çizelge</a>
                                                     </td>
                                                 </tr>
                                             }

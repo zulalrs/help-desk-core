@@ -85,13 +85,16 @@ namespace HelpDesk.Web
             services.AddScoped<IRepository<Photograph, string>, PhotographRepo>();
             services.AddScoped<IRepository<Survey, string>, SurveyRepo>();
 
-           
-
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddAutoMapper();
 
-            Mapper.Initialize(ProfileUserMapping);
-            Mapper.Initialize(IssueMapping);
+            Mapper.Initialize(cfg => {
+                ProfileUserMapping(cfg);
+                IssueMapping(cfg);
+            });
+
+
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+           
         }
 
         private void ProfileUserMapping(IMapperConfigurationExpression cfg)

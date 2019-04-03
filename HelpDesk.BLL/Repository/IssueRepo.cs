@@ -7,11 +7,7 @@ namespace HelpDesk.BLL.Repository
     public class IssueRepo : RepositoryBase<Issue, string>
     {
         private readonly MyContext _dbContext;
-
-        public IssueRepo():base()
-        {
-        }
-
+        
         public IssueRepo(MyContext dbContext) : base(dbContext)
         {
             _dbContext = dbContext;

@@ -1,0 +1,87 @@
+﻿@model HelpDesk.Models.ViewModels.IssueVM
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h3 style="color:green">@TempData["Message"]</h3>
+<h3 style="color:red">@TempData["Message2"]</h3>
+<h3 style="color:red">@TempData["Message3"]</h3>
+
+@using (Html.BeginForm("Create", "Issue", FormMethod.Post, new { @class = "form-horizontal", enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+
+<div class="form-horizontal">
+    <hr />
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @*@Html.Hidden("CustomerId", HttpContext.Current.User.Identity.GetUserId())*@
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-4">
+            @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control input-rounded" } })
+            @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.ProductType, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-4">
+            @*@Html.EnumDropDownListFor(model => model.ProductType, new { @class = "form-control input-rounded" })
+                @Html.ValidationMessageFor(model => model.ProductType, "", new { @class = "text-danger" })*@
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.PostedPhoto, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-4">
+            @Html.TextBoxFor(model => model.PostedPhoto, new { type = "file", multiple = true })
+            @Html.ValidationMessageFor(model => model.PostedPhoto, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    @*<div class="form-group">
+            @Html.LabelFor(model => model.Location, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-4">
+                @Html.EnumDropDownListFor(model => model.Location, new { @class = "form-control input-rounded" })
+                @Html.ValidationMessageFor(model => model.Location, "", new { @class = "text-danger" })
+            </div>
+        </div>*@
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.PurchasedDate, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-4">
+            @Html.EditorFor(model => model.PurchasedDate, new { htmlAttributes = new { @class = "datepicker", @type = "date" } })
+            @Html.ValidationMessageFor(model => model.PurchasedDate, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-4">
+            <input type="submit" value="Oluştur" class="btn btn-instagram btn-block" />
+            <a href="@Url.Action("Index","Home")" class="btn btn-block btn-google">Profil Sayfası</a>
+        </div>
+    </div>
+</div>
+}
+
+<link href="~/assets/css/jquery-ui.min.css" rel="stylesheet" />
+<link href="~/assets/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+
+<script src="~/assets/Scripts/jquery-3.3.1.min.js"></script>
+<script src="~/assets/Scripts/jquery-ui.min.js"></script>
+@section bottom{
+    <script>
+        $(function () {
+            $(".datepicker").datepicker({
+                dateFormat: "yy/mm/dd",
+                changeMonth: true,
+                changeYear: true,
+                //yearRange:"2015:2020"
+                minDate: new Date(2019, 0, 1),
+                maxDate: '0'
+            });
+        });
+    </script>
+}
+

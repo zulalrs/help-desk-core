@@ -132,11 +132,11 @@ namespace HelpDesk.BLL.Account
             return $"{user.Email}";
         }
 
-        public int GetIssueCount()
-        {
-            var id = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            return new IssueRepo().GetAll(x => x.CustomerId == id).Count;
-        }
+        //public int GetIssueCount()
+        //{
+        //    var id = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        //    return new IssueRepo().GetAll(x => x.CustomerId == id).Count;
+        //}
 
         public async Task<string> GetAvatarPath(string userId)
         {

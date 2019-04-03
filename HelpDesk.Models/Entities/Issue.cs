@@ -1,6 +1,7 @@
 ﻿using HelpDesk.Models.Abstracts;
 using HelpDesk.Models.Enums;
 using HelpDesk.Models.IdentityEntities;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -31,8 +32,8 @@ namespace HelpDesk.Models.Entities
         [DisplayName("Ürün")]
         public ProductTypes ProductType { get; set; }
 
-        //[DisplayName("Fotoğraf")]
-        //public List<string> PhotoPath { get; set; }
+        [DisplayName("Fotoğraf")]
+        public List<Photograph> PhotoPath { get; set; }
 
         [DisplayName("Güncel Durum")]
         public IssueStates IssueState { get; set; } = IssueStates.Beklemede;
