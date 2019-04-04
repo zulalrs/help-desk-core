@@ -1,13 +1,11 @@
 ﻿using HelpDesk.Models.Abstracts;
 using HelpDesk.Models.Enums;
 using HelpDesk.Models.IdentityEntities;
-using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
 
 namespace HelpDesk.Models.Entities
 {
@@ -34,7 +32,7 @@ namespace HelpDesk.Models.Entities
 
         [DisplayName("Fotoğraf")]
         [NotMapped]
-        public List<Photograph> PhotoPath { get; set; }
+        public List<string> PhotoPath { get; set; }
 
         [DisplayName("Güncel Durum")]
         public IssueStates IssueState { get; set; } = IssueStates.Beklemede;

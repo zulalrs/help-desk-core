@@ -1,4 +1,5 @@
-﻿@*@inject HelpDesk.BLL.Account.MembershipTools*@
+﻿@using  HelpDesk.BLL.Account
+@inject MembershipTools MembershipTool
 @model HelpDesk.Models.ViewModels.UserProfileVM
 @{
     ViewData["Title"] = "Kullanıcı Detay";
@@ -9,9 +10,9 @@
     <table id="user" class="table table-bordered table-striped" style="clear: both">
         <tbody>
             <tr>
-                    <td style="width: 35%;font-weight: bold"></td>
-                    <td style="width: 65%;"><img src="@Model.AvatarPath" style="width: 200px; height: 200px;" /></td>
-                </tr>
+                <td style="width: 35%;font-weight: bold"></td>
+                <td style="width: 65%;"><img src="@Model.AvatarPath" style="width: 200px; height: 200px;" /></td>
+            </tr>
             <tr>
                 <td style="width: 35%;font-weight: bold">Adı Soyadı</td>
                 <td style="width: 65%;">@Model.Name @Model.Surname</td>
@@ -40,8 +41,8 @@
     </table>
     <div class="form-group">
         <div class="col-md-6 col-md-offset-3">
-                <a href="@Url.Action("UserProfile", "Account")" class="btn btn-instagram btn-block">Profili Güncelle</a>
-                <a href="@Url.Action("Index", "Issue")" class="btn btn-google btn-block">Aktif Kayıtlar</a>@*(@(MembershipTools.GetIssueCount()))</a>*@
-            </div>
+            <a href="@Url.Action("UserProfile", "Account")" class="btn btn-instagram btn-block">Profili Güncelle</a>
+            <a href="@Url.Action("Index", "Issue")" class="btn btn-google btn-block">Aktif Kayıtlar (@(MembershipTool.GetIssueCount()))</a>
+        </div>
     </div>
 </div>

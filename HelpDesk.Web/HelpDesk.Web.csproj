@@ -538,6 +538,7 @@
   <ItemGroup>
     <Folder Include="wwwroot\assets\lightbox\.github\" />
     <Folder Include="wwwroot\assets\lightbox\dist\images\" />
+    <Folder Include="wwwroot\Uploads\" />
   </ItemGroup>
 
 </Project>

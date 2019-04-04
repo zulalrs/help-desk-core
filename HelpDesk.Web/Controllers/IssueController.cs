@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using HelpDesk.BLL.Account;
 using HelpDesk.BLL.Helpers;
-using HelpDesk.BLL.Repository;
 using HelpDesk.BLL.Repository.Abstracts;
 using HelpDesk.BLL.Services.Senders;
 using HelpDesk.Models.Entities;
@@ -154,10 +153,6 @@ namespace HelpDesk.Web.Controllers
                             {
                                 await file.CopyToAsync(fileStream);
                             }
-                            //var img2 = new WebImage(filepath2);
-                            //img2.Resize(250, 250, false);
-                            //img2.Save(filepath2);
-
                             fotorepo.Insert(new Photograph()
                             {
                                 IssueId = issue.Id,
@@ -179,30 +174,24 @@ namespace HelpDesk.Web.Controllers
                         {
                             Directory.CreateDirectory(directorypath);
                         }
+                        
 
                         using (var fileStream = new FileStream(filePath, FileMode.Create))
                         {
-                            await file.CopyToAsync(fileStream);
+                            file.CopyTo(fileStream);
                         }
-
-                        //file.SaveAs(filepath);
-
-                        //var img = new WebImage(filepath);
-                        //img.Resize(250, 250, false);
-                        //img.Save(filepath);
-
                         fotorepo.Insert(new Photograph()
                         {
                             IssueId = issue.Id,
-                            Path = "/Upload/" + fileName + extName
+                            Path = "/Uploads/" + fileName + extName
                         });
+
                     });
                 }
 
                 var fotograflar = fotorepo.GetAll(x => x.IssueId == issue.Id).ToList();
                 var foto = fotograflar.Select(x => x.Path).ToList();
-                var list = issue.PhotoPath.Select(x => x.Path).ToList();
-                list = foto;
+                issue.PhotoPath = foto;
                 repo.Update(issue);
 
                 TempData["Message"] = "Arıza kaydınız başarı ile oluşturuldu.";
@@ -249,6 +238,21 @@ namespace HelpDesk.Web.Controllers
                 };
                 return RedirectToAction("Error500", "Home");
             }
+        }
+
+        [HttpGet]
+        //[Route("kayit_detay/{id}")]
+        public ActionResult Details(string id)
+        {
+            var issue = _issueRepo.GetById(id);
+            if (issue == null)
+            {
+                TempData["Message2"] = "Arıza kaydı bulunamadi.";
+                return RedirectToAction("Index", "Issue");
+            }
+            var data = Mapper.Map<Issue, IssueVM>(issue);
+            data.PhotoPath = _photographRepo.GetAll(x => x.IssueId == id).Select(y => y.Path).ToList();
+            return View(data);
         }
 
     }

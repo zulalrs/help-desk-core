@@ -9,34 +9,29 @@ namespace HelpDesk.DAL
 {
     public class MyContext : IdentityDbContext<ApplicationUser, ApplicationRole, string>
     {
-
         public MyContext()
         {
-        }
 
+        }
         public MyContext(DbContextOptions<MyContext> options)
             : base(options)
         {
         }
 
-        public override int SaveChanges()
-        {
-            var entities = from e in ChangeTracker.Entries()
-                           where e.State == EntityState.Added
-                               || e.State == EntityState.Modified
-                           select e.Entity;
-            foreach (var entity in entities)
-            {
-                var validationContext = new ValidationContext(entity);
-                Validator.ValidateObject(entity, validationContext);
-            }
+        //public override int SaveChanges()
+        //{
+        //    var entities = from e in ChangeTracker.Entries()
+        //                   where e.State == EntityState.Added
+        //                       || e.State == EntityState.Modified
+        //                   select e.Entity;
+        //    foreach (var entity in entities)
+        //    {
+        //        var validationContext = new ValidationContext(entity);
+        //        Validator.ValidateObject(entity, validationContext);
+        //    }
 
-            return base.SaveChanges();
-        }
-        protected override void OnModelCreating(ModelBuilder builder)
-        {
-            base.OnModelCreating(builder);
-        }
+        //    return base.SaveChanges();
+        //}
 
         public virtual DbSet<Issue> Issues { get; set; }
         public virtual DbSet<IssueLog> IssueLogs { get; set; }

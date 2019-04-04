@@ -1,16 +1,13 @@
-﻿using System.Collections.Generic;
-using HelpDesk.BLL.Repository;
-using HelpDesk.BLL.Repository.Abstracts;
+﻿using HelpDesk.BLL.Repository.Abstracts;
+using HelpDesk.DAL;
+using HelpDesk.Models.Entities;
 using HelpDesk.Models.IdentityEntities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using HelpDesk.DAL;
-using HelpDesk.Models.Entities;
-using HelpDesk.Models.Enums;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace HelpDesk.BLL.Account
 {
@@ -21,12 +18,12 @@ namespace HelpDesk.BLL.Account
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        private readonly IssueRepo _issueRepo;
-        private readonly SurveyRepo _surveyRepo;
+        private readonly IRepository<Issue, string> _issueRepo;
+        private readonly IRepository<Survey, string> _surveyRepo;
 
         private readonly MyContext _db;
 
-        public MembershipTools(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, SignInManager<ApplicationUser> signInManager, IHttpContextAccessor httpContextAccessor, MyContext db, IssueRepo issueRepo, SurveyRepo surveyRepo)
+        public MembershipTools(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, SignInManager<ApplicationUser> signInManager, IHttpContextAccessor httpContextAccessor, MyContext db, IRepository<Issue, string> issueRepo, IRepository<Survey, string> surveyRepo)
         {
             _userManager = userManager;
             _roleManager = roleManager;
@@ -56,8 +53,6 @@ namespace HelpDesk.BLL.Account
 
         public UserStore<ApplicationUser> NewUserStore() => new UserStore<ApplicationUser>(_db ?? new MyContext());
         public RoleStore<ApplicationRole> NewRoleStore() => new RoleStore<ApplicationRole>(_db ?? new MyContext());
-        public IssueRepo IssueRepo => _issueRepo ?? new IssueRepo(_db);
-        public SurveyRepo SurveyRepo => _surveyRepo ?? new SurveyRepo(_db);
 
         public async Task<string> GetRole(string userId)
         {
@@ -68,9 +63,7 @@ namespace HelpDesk.BLL.Account
                 var id = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 if (string.IsNullOrEmpty(id))
                     return "";
-
                 user = await UserManager.FindByIdAsync(id);
-
             }
             else
             {
@@ -93,9 +86,7 @@ namespace HelpDesk.BLL.Account
             {
                 var id = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 if (string.IsNullOrEmpty(id))
-                {
                     return "";
-                }
 
                 user = await UserManager.FindByIdAsync(id);
             }
@@ -103,11 +94,8 @@ namespace HelpDesk.BLL.Account
             {
                 user = await UserManager.FindByIdAsync(userId);
                 if (user == null)
-                {
                     return null;
-                }
             }
-
             return $"{user.Name} {user.Surname}";
         }
 
@@ -127,9 +115,7 @@ namespace HelpDesk.BLL.Account
             {
                 var id = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 if (string.IsNullOrEmpty(id))
-                {
                     return "";
-                }
 
                 user = await UserManager.FindByIdAsync(id);
             }
@@ -137,9 +123,7 @@ namespace HelpDesk.BLL.Account
             {
                 user = await UserManager.FindByIdAsync(userId);
                 if (user == null)
-                {
                     return null;
-                }
             }
             return $"{user.Email}";
         }
@@ -147,7 +131,7 @@ namespace HelpDesk.BLL.Account
         public int GetIssueCount()
         {
             var id = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            return IssueRepo.GetAll(x => x.CustomerId == id).Count;
+            return _issueRepo.GetAll(x => x.CustomerId == id).Count;
         }
 
         public async Task<string> GetAvatarPath(string userId)
@@ -181,14 +165,14 @@ namespace HelpDesk.BLL.Account
             if (tech == null)
                 return "0";
 
-            var issues = IssueRepo.GetAll(x => x.TechnicianId == techId);
+            var issues = _issueRepo.GetAll(x => x.TechnicianId == techId);
             if (issues == null)
                 return "0";
 
             var isDoneIssues = new List<Issue>();
             foreach (var issue in issues)
             {
-                var survey = SurveyRepo.GetById(issue.SurveyId);
+                var survey = _surveyRepo.GetById(issue.SurveyId);
                 if (survey.IsDone)
                     isDoneIssues.Add(issue);
             }
@@ -196,7 +180,7 @@ namespace HelpDesk.BLL.Account
             var count = 0.0;
             foreach (var item in isDoneIssues)
             {
-                var survey = SurveyRepo.GetById(item.SurveyId);
+                var survey = _surveyRepo.GetById(item.SurveyId);
                 count += survey.TechPoint;
             }
 

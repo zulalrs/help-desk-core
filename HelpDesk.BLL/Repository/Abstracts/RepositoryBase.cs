@@ -17,11 +17,6 @@ namespace HelpDesk.BLL.Repository.Abstracts
             DbContext = dbContext;
             DbObject = DbContext.Set<T>();
         }
-
-        protected RepositoryBase()
-        {
-        }
-
         public List<T> GetAll()
         {
             return DbObject.ToList();
@@ -40,7 +35,7 @@ namespace HelpDesk.BLL.Repository.Abstracts
         public virtual void Insert(T entity)
         {
             DbObject.Add(entity);
-            DbContext.SaveChanges();
+            this.Save();
         }
 
         public virtual void Delete(T entity)

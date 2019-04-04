@@ -1,0 +1,133 @@
+﻿@using HelpDesk.BLL.Account
+@inject MembershipTools MembershipTool
+@model HelpDesk.Models.ViewModels.IssueVM
+@{
+    ViewData["Title"] = "Details";
+}
+
+@section top{
+    <link href="~/assets/lightbox/dist/css/lightbox.css" rel="stylesheet" />
+}
+<h3 style="color:green">@TempData["Message"]</h3>
+<h3 style="color:red">@TempData["Message2"]</h3>
+<div class="col-md-6 col-md-offset-3">
+    <table id="user" class="table table-bordered table-striped" style="clear: both">
+        <tbody>
+            <tr>
+                <td style="width: 35%;font-weight: bold"></td>
+                <td style="width: 65%;">
+                    @foreach (var current in Model.PhotoPath)
+                    {
+                        <a href="@current" data-lightbox="@current"><img class="mySlides" src="@current" alt="Alternate Text" width="250" height="250" /></a>
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td style="width: 35%;font-weight: bold">Kayıt Id</td>
+                <td style="width: 65%;">@Model.IssueId</td>
+            </tr>
+            <tr>
+                <td style="width: 35%;font-weight: bold">Müşteri Adı</td>
+                <td style="width: 65%;">@(await MembershipTool.GetNameSurname(Model.CustomerId))</td>
+            </tr>
+            <tr>
+                <td style="width: 35%;font-weight: bold">Operatör Adı</td>
+                <td style="width: 65%;">@(Model.OperatorId == null ? "Operatör Atanmadı" : await MembershipTool.GetNameSurname(Model.OperatorId))</td>
+            </tr>
+            <tr>
+                <td style="width: 35%;font-weight: bold">Teknisyen Adı</td>
+                <td style="width: 65%;">@(Model.TechnicianId == null ? "Teknisyen Atanmadı" : await MembershipTool.GetNameSurname(Model.TechnicianId))</td>
+            </tr>
+            <tr>
+                <td style="width: 35%;font-weight: bold">Ürün</td>
+                <td style="width: 65%;">@Model.ProductType</td>
+            </tr>
+            <tr>
+                <td style="width: 35%;font-weight: bold">Açıklama</td>
+                <td style="width: 65%;">@Model.Description</td>
+            </tr>
+            @*<tr>
+                <td style="width: 35%;font-weight: bold">Konum</td>
+                <td style="width: 65%;">@Model.Location</td>
+            </tr>*@
+            <tr>
+                <td style="width: 35%;font-weight: bold">Satın Alma Tarihi</td>
+                <td style="width: 65%;">@Model.PurchasedDate.ToShortDateString()</td>
+            </tr>
+            <tr>
+                <td style="width: 35%;font-weight: bold">Garanti Durumu</td>
+                @if (@Model.WarrantyState)
+                {
+                    <td style="width: 65%;">Garantisi Var</td>
+                }
+                else
+                {
+                    <td style="width: 65%;">Garantisi Yok</td>
+                }
+            </tr>
+            <tr>
+                <td style="width: 35%;font-weight: bold">Kayıt Oluşturma Tarihi</td>
+                <td style="width: 65%;">@Model.CreatedDate.ToShortDateString()</td>
+            </tr>
+            <tr>
+                <td style="width: 35%;font-weight: bold">Servis Bedeli</td>
+                <td style="width: 65%;">@Model.ServiceCharge ₺</td>
+            </tr>
+            @*<tr>
+                <td style="width: 35%;font-weight: bold">Konum</td>
+                <td style="width: 65%;">@Model.Location</td>
+            </tr>*@
+            <tr>
+                <td style="width: 35%;font-weight: bold">Rapor</td>
+                @if (@Model.TechReport == null)
+                {
+                    <td style="width: 65%;text-decoration: underline red">Teknisyen raporu bulunmamaktadır.</td>
+                }
+                else
+                {
+                    <td style="width: 65%;text-decoration: underline red">@Model.TechReport</td>
+                }
+            </tr>
+            <tr>
+                <td style="width: 35%;font-weight: bold">Kayıt Kapanma Tarihi</td>
+                @if (@Model.ClosedDate == null)
+                {
+                    <td style="width: 65%;">Arıza henüz sonuçlanmamıştır.</td>
+                }
+                else
+                {
+                    <td style="width: 65%;">@(Model.ClosedDate?.ToShortDateString())</td>
+                }
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+@section bottom
+    {
+    <script src="~/assets/lightbox/dist/js/lightbox.js"></script>
+
+    <script>
+        var slideIndex = 0;
+        carousel();
+
+        function carousel() {
+            var i;
+            var x = document.getElementsByClassName("mySlides");
+            for (i = 0; i < x.length; i++) {
+                x[i].style.display = "none";
+            }
+            slideIndex++;
+            if (slideIndex > x.length) { slideIndex = 1 }
+            x[slideIndex - 1].style.display = "block";
+            setTimeout(carousel, 2000); // Change image every 2 seconds
+        }
+    </script>
+
+    <script>
+        lightbox.option({
+            'resizeDuration': 200,
+            'wrapAround': true
+        })
+    </script>
+}
