@@ -41,8 +41,8 @@
     </table>
     <div class="form-group">
         <div class="col-md-6 col-md-offset-3">
-            <a href="@Url.Action("UserProfile", "Account")" class="btn btn-instagram btn-block">Profili Güncelle</a>
-            <a href="@Url.Action("Index", "Issue")" class="btn btn-google btn-block">Aktif Kayıtlar (@(MembershipTool.GetIssueCount()))</a>
+            <a asp-action="UserProfile" asp-controller="Account" class="btn btn-instagram btn-block">Profili Güncelle</a>
+            <a asp-action="Index" asp-controller="Issue" class="btn btn-google btn-block">Aktif Kayıtlar (@(MembershipTool.GetIssueCount()))</a>
         </div>
     </div>
 </div>

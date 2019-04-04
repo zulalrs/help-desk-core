@@ -1,0 +1,64 @@
+﻿@model List<HelpDesk.Models.Entities.IssueLog>
+@{
+    ViewData["Title"] = "Kayıt Zaman Çizelgesi";
+}
+
+@section timelinetop{
+    <link href="~/assets/plugins/vertical-timeline/css/style.css" rel="stylesheet">
+    <script src="~/assets/plugins/vertical-timeline/js/modernizr.js"></script>
+}
+
+@for (int i = 0; i < Model.Count; i++)
+{
+    var current = Model[i];
+    if (i % 2 == 0)
+    {
+        <div class="cd-timeline-block">
+            <div class="cd-timeline-img cd-success bounce-in">
+                @switch (current.FromWhom)
+                {
+                    case "Müşteri":<i class="fa fa-star"></i>
+                        break;
+                    case "Operatör": <i class="fa fa-pencil-square-o"></i>
+                        break;
+                    default: <i class="fa fa-paperclip"></i>
+                        break;
+                }
+            </div> <!-- cd-timeline-img -->
+            <div class="cd-timeline-content">
+                <h4 style="font-weight:500;font-size:large;font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif">@current.FromWhom</h4>
+                <p style="font-weight:500;font-size:large;font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif">@current.Description</p>
+                <span class="cd-date">@current.CreatedDate.ToShortDateString() - @current.CreatedDate.ToShortTimeString()</span>
+            </div> <!-- cd-timeline-content -->
+        </div>
+    }
+    else
+    {
+        <div class="cd-timeline-block">
+            <div class="cd-timeline-img cd-danger bounce-in">
+                @switch (current.FromWhom)
+                {
+                    case "Müşteri":<i class="fa fa-star"></i>
+                        break;
+                    case "Operatör": <i class="fa fa-pencil-square-o"></i>
+                        break;
+                    default: <i class="fa fa-paperclip"></i>
+                        break;
+                }
+            </div> <!-- cd-timeline-img -->
+            <div class="cd-timeline-content">
+                <h4 style="font-weight:500;font-size:large;font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif">@current.FromWhom</h4>
+                <p style="font-weight:500;font-size:large;font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif">@current.Description</p>
+                <span class="cd-date">@current.CreatedDate.ToShortDateString() - @current.CreatedDate.ToShortTimeString()</span>
+            </div> <!-- cd-timeline-content -->
+        </div>
+    }
+}
+<hr />
+<br />
+
+@section timelinebottom{
+    <!-- Javascripts -->
+    <script src="~/assets/plugins/vertical-timeline/js/main.js"></script>
+    <script src="~/assets/js/pages/timeline.js"></script>
+}

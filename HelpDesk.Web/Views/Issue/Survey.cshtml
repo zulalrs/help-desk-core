@@ -1,0 +1,70 @@
+﻿@model HelpDesk.Models.ViewModels.SurveyVM
+@{
+    ViewData["Title"] = "Değerlendirme Anketi";
+}
+
+<h3 style="color:red">@(TempData["Message2"] as string)</h3>
+
+
+<form asp-action="Survey" asp-controller="Issue" method="post" class="form-horizontal">
+    <input type="hidden" asp-for="SurveyId" />
+
+    <div class="form-horizontal">
+        <hr />
+
+        <div class="form-group">
+            <label asp-for="Satisfaction" class="control-label col-md-2"></label>
+            <div class="col-md-3">
+                <input type="number" asp-for="Satisfaction" class="form-control" stepsize="1" min="0" max="5" />
+                <span asp-validation-for="Satisfaction" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="TechPoint" class="control-label col-md-2"></label>
+            <div class="col-md-3">
+                <input type="number" asp-for="TechPoint" class="form-control" stepsize="1" min="0" max="5" />
+                <span asp-validation-for="TechPoint" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Speed" class="control-label col-md-2"></label>
+            <div class="col-md-3">
+                <input type="number" asp-for="Speed" class="form-control" stepsize="1" min="0" max="5" />
+                <span asp-validation-for="Speed" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Pricing" class="control-label col-md-2"></label>
+            <div class="col-md-3">
+                <input type="number" asp-for="Pricing" class="form-control" stepsize="1" min="0" max="5" />
+                <span asp-validation-for="Pricing" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Solving" class="control-label col-md-2"></label>
+            <div class="col-md-3">
+                <input type="number" asp-for="Solving" class="form-control" stepsize="1" min="0" max="5" />
+                <span asp-validation-for="Solving" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Suggestions" class="control-label col-md-2"></label>
+            <div class="col-md-6" style="width: 304px;height: 156px">
+                <input type="number" asp-for="Suggestions" class="form-control" stepsize="1" min="0" max="5" />
+                <span asp-validation-for="Suggestions" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-3">
+                <input type="submit" value="Gönder" class="btn btn-instagram btn-block" />
+            </div>
+        </div>
+    </div>
+</form>
+

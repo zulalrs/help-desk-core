@@ -1,0 +1,66 @@
+﻿@using HelpDesk.BLL.Account
+@inject MembershipTools MembershipTool
+@model List<HelpDesk.Models.Entities.Issue>
+@{
+    ViewData["Title"] = "Kapanmış Kayıtlar";
+}
+<div>
+    <h3 style="color:green">@TempData["Message"]</h3>
+    <h3 style="color:red">@TempData["Message2"]</h3>
+    <h3 style="color:red">@TempData["Message3"]</h3>
+    <hr />
+    <!-- Page Inner -->
+    <div class="page-inner">
+        <div id="main-wrapper">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-white">
+                        <div class="panel-body">
+                            <div class="table-responsive">
+                                <table id="example2" class="display table" style="width: 100%; mso-cellspacing: 0;">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Id</th>
+                                            <th>Açıklama</th>
+                                            <th>Durum</th>
+                                            <th>Teknisyen</th>
+                                            <th>Konum</th>
+                                            <th>Arıza Kapanma Tarihi</th>
+                                            <th>Aksiyon</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @for (int i = 0; i < Model.Count; i++)
+                                        {
+                                            var current = Model[i];
+
+                                            <tr style="background: lightgrey">
+                                                <th>@(i + 1)</th>
+                                                <td>@current.Id</td>
+                                                <td>@current.Description</td>
+                                                <td>@current.IssueState</td>
+                                                <td style="text-align:justify">@(current.TechnicianId == null ? "Teknisyen Atanmadı" : await MembershipTool.GetNameSurname(current.TechnicianId))</td>
+                                                @*<td>@current.Location</td>*@
+                                                <td>@current.ClosedDate?.ToLongDateString()</td>
+                                                <td>
+                                                    <a asp-action="Details" asp-controller="Issue" asp-route-id="@current.Id" class="btn btn-instagram"></a>
+                                                    @*<a href="@Url.Action("Details", "Issue",new {id=current.Id})" class="btn btn-instagram">Detay</a>*@
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- Row -->
+        </div><!-- Main Wrapper -->
+
+    </div><!-- /Page Inner -->
+    <div class="col-md-4">
+        <a asp-action="Index" asp-controller="Home" class="btn btn-block btn-instagram">Profil Sayfası</a>
+    </div>
+</div>
+

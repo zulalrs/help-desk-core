@@ -89,8 +89,8 @@ namespace HelpDesk.Web
 
             Mapper.Initialize(cfg => {
                 ProfileUserMapping(cfg);
-
                 IssueMapping(cfg);
+                SurveyMapping(cfg);
             });
 
 
@@ -109,6 +109,12 @@ namespace HelpDesk.Web
             cfg.CreateMap<Issue, IssueVM>()
                  .ForMember(dest => dest.IssueId, opt => opt.MapFrom(x => x.Id))
                  .ReverseMap();
+        }
+        private static void SurveyMapping(IMapperConfigurationExpression cfg)
+        {
+            cfg.CreateMap<Survey, SurveyVM>()
+                .ForMember(dest => dest.SurveyId, opt => opt.MapFrom(x => x.Id))
+                .ReverseMap();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

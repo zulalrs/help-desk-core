@@ -52,12 +52,14 @@
                                                         Location
                                                     </td>
                                                     <td>
-                                                        <a href="@Url.Action("Details", "Issue",new
+                                                        <a asp-action="Details" asp-controller="Issue" asp-route-id="@current.IssueId" class="btn btn-instagram">Detay</a>
+                                                        <a asp-action="Timeline" asp-controller="Issue" asp-route-id="@current.IssueId" class="btn btn-instagram">Çizelge</a>
+                                                        @*<a href="@Url.Action("Details", "Issue",new
 
-{id=current.IssueId})" class="btn btn-instagram">Detay</a>
-                                                        <a href="@Url.Action("Timeline", "Issue",new
+        {id=current.IssueId})" class="btn btn-instagram">Detay</a>
+                                                                <a href="@Url.Action("Timeline", "Issue",new
 
-{id=current.IssueId})" class="btn btn-instagram">Çizelge</a>
+        {id=current.IssueId})" class="btn btn-instagram">Çizelge</a>*@
                                                     </td>
                                                 </tr>
                                             }
@@ -79,12 +81,8 @@ IssueStates.KabulEdildi || current.IssueState == IssueStates.İşlemde)
                                                         Location
                                                     </td>
                                                     <td>
-                                                        <a href="@Url.Action("Details", "Issue",new
-
-{id=current.IssueId})" class="btn btn-instagram">Detay</a>
-                                                        <a href="@Url.Action("Timeline", "Issue",new
-
-{id=current.IssueId})" class="btn btn-instagram">Çizelge</a>
+                                                        <a asp-action="Details" asp-controller="Issue" asp-route-id="@current.IssueId" class="btn btn-instagram">Detay</a>
+                                                        <a asp-action="Timeline" asp-controller="Issue" asp-route-id="@current.IssueId" class="btn btn-instagram">Çizelge</a>
                                                     </td>
                                                 </tr>
                                             }
@@ -104,12 +102,8 @@ IssueStates.KabulEdildi || current.IssueState == IssueStates.İşlemde)
                                                         Location
                                                     </td>
                                                     <td>
-                                                        <a href="@Url.Action("Details", "Issue",new
-
-{id=current.IssueId})" class="btn btn-instagram">Detay</a>
-                                                        <a href="@Url.Action("Timeline", "Issue",new
-
-{id=current.IssueId})" class="btn btn-instagram">Çizelge</a>
+                                                        <a asp-action="Details" asp-controller="Issue" asp-route-id="@current.IssueId" class="btn btn-instagram">Detay</a>
+                                                        <a asp-action="Timeline" asp-controller="Issue" asp-route-id="@current.IssueId" class="btn btn-instagram">Çizelge</a>
                                                     </td>
                                                 </tr>
                                             }
@@ -125,8 +119,8 @@ IssueStates.KabulEdildi || current.IssueState == IssueStates.İşlemde)
 
     </div><!-- /Page Inner -->
     <div class="col-md-4">
-        <a href="@Url.Action("Create","Issue")" class="btn btn-block btn-instagram">Kayıt Oluştur</a>
-        <a href="@Url.Action("Index","Home")" class="btn btn-block btn-google">Profil Sayfası</a>
+        <a asp-action="Create" asp-controller="Issue" class="btn btn-block btn-instagram">Kayıt Oluştur</a>
+        <a asp-action="Index" asp-controller="Account" class="btn btn-block btn-instagram">Profil Sayfası</a>
     </div>
 </div>
 

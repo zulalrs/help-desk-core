@@ -6,6 +6,7 @@ using HelpDesk.BLL.Services.Senders;
 using HelpDesk.Models.Entities;
 using HelpDesk.Models.Enums;
 using HelpDesk.Models.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -21,15 +22,18 @@ namespace HelpDesk.Web.Controllers
         private readonly IRepository<Issue, string> _issueRepo;
         private readonly IRepository<IssueLog, string> _issuelogRepo;
         private readonly IRepository<Photograph, string> _photographRepo;
+        private readonly IRepository<Survey, string> _surveyRepo;
         private readonly IHostingEnvironment _hostingEnvironment;
-        public IssueController(MembershipTools membershipTools, IRepository<Issue, string> issueRepo, IRepository<IssueLog, string> issuelogRepo, IRepository<Photograph, string> photographRepo, IHostingEnvironment hostingEnvironment) :base(membershipTools)
+        public IssueController(MembershipTools membershipTools, IRepository<Issue, string> issueRepo, IRepository<IssueLog, string> issuelogRepo, IRepository<Photograph, string> photographRepo, IHostingEnvironment hostingEnvironment, IRepository<Survey, string> surveyRepo) :base(membershipTools)
         {
             _membershipTools = membershipTools;
             _issueRepo = issueRepo;
             _issuelogRepo = issuelogRepo;
             _photographRepo = photographRepo;
+            _surveyRepo = surveyRepo;
             _hostingEnvironment = hostingEnvironment;
         }
+
         [HttpGet]
         //[Route("arizakayit_anasayfa")]
         public async Task<ActionResult> Index()
@@ -252,6 +256,104 @@ namespace HelpDesk.Web.Controllers
             }
             var data = Mapper.Map<Issue, IssueVM>(issue);
             data.PhotoPath = _photographRepo.GetAll(x => x.IssueId == id).Select(y => y.Path).ToList();
+            return View(data);
+        }
+
+        [HttpGet]
+        //[Authorize(Roles = "Customer")]
+        public ActionResult Survey(string code)
+        {
+            try
+            {
+                var surveyRepo = _surveyRepo;
+                var survey = surveyRepo.GetById(code);
+                if (survey.IsDone == true)
+                {
+                    TempData["Message2"] = "Bu anket zaten tamamlanmış.";
+                    return RedirectToAction("Index", "Home");
+                }
+                if (survey == null)
+                {
+                    return RedirectToAction("Index", "Home");
+                }
+
+                var data = Mapper.Map<Survey, SurveyVM>(survey);
+                return View(data);
+            }
+            catch (Exception ex)
+            {
+                TempData["Message2"] = new ErrorVM()
+                {
+                    Text = $"Bir hata oluştu {ex.Message}",
+                    ActionName = "Survey",
+                    ControllerName = "Issue",
+                    ErrorCode = 500
+                };
+                return RedirectToAction("Error500", "Home");
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        //[Authorize(Roles = "Customer")]
+        public ActionResult Survey(SurveyVM model)
+        {
+            if (!ModelState.IsValid)
+            {
+                ModelState.AddModelError("", "Hata Oluştu.");
+                return RedirectToAction("Survey", "Issue", model);
+            }
+            try
+            {
+                var surveyRepo = _surveyRepo;
+                var survey = surveyRepo.GetById(model.SurveyId);
+                if (survey == null)
+                {
+                    return RedirectToAction("Index", "Home");
+                }
+
+                survey.Pricing = model.Pricing;
+                survey.Satisfaction = model.Satisfaction;
+                survey.Solving = model.Solving;
+                survey.Speed = model.Speed;
+                survey.TechPoint = model.TechPoint;
+                survey.Suggestions = model.Suggestions;
+                survey.IsDone = true;
+                surveyRepo.Update(survey);
+                TempData["Message"] = "Anket tamamlandı.";
+                return RedirectToAction("UserProfile", "Account");
+            }
+            catch (Exception ex)
+            {
+                TempData["Message2"] = new ErrorVM()
+                {
+                    Text = $"Bir hata oluştu {ex.Message}",
+                    ActionName = "Survey",
+                    ControllerName = "Issue",
+                    ErrorCode = 500
+                };
+                return RedirectToAction("Error500", "Home");
+            }
+        }
+
+
+        [HttpGet]
+        //[Route("IssueTimeline/{id}")]
+        public ActionResult Timeline(string id)
+        {
+            var data = _issuelogRepo.GetAll(x => x.IssueId == id).OrderBy(x => x.CreatedDate).ToList();
+            if (data == null)
+                return RedirectToAction("Details", "Issue", id);
+            return View(data);
+        }
+
+        [HttpGet]
+        //[Authorize(Roles = "Admin, Operator")]
+        public ActionResult ListAll()
+        {
+            var data = _issueRepo.GetAll(x => x.ClosedDate != null);
+            if (data == null)
+                return RedirectToAction("Index", "Home");
             return View(data);
         }
 
