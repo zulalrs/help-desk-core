@@ -272,6 +272,9 @@ namespace HelpDesk.Web.Controllers
                 user.AvatarPath = "/Uploads/" + fileName + extName;
             }
 
+            string baseUri = "http://maps.googleapis.com/maps/api/geocode/xml?latlng={0},{1}&sensor=false";
+            string location = string.Empty;
+
             try
             {
                 user.Name = model.Name;
