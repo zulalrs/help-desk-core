@@ -87,7 +87,8 @@ namespace HelpDesk.Web.Controllers
                 {
                     Description = model.Description,
                     IssueState = model.IssueState,
-                    //Location = model.Location == Models.Enums.Locations.KonumYok ? user.Location : model.Location,
+                    Latitude=model.Latitude,
+                    Longitude=model.Longitude,
                     ProductType = model.ProductType,
                     CustomerId = model.CustomerId,
                     PurchasedDate = model.PurchasedDate,
@@ -179,7 +180,6 @@ namespace HelpDesk.Web.Controllers
                             Directory.CreateDirectory(directorypath);
                         }
                         
-
                         using (var fileStream = new FileStream(filePath, FileMode.Create))
                         {
                             file.CopyTo(fileStream);

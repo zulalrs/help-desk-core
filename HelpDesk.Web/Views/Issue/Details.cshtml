@@ -46,10 +46,14 @@
                 <td style="width: 35%;font-weight: bold">Açıklama</td>
                 <td style="width: 65%;">@Model.Description</td>
             </tr>
-            @*<tr>
-                <td style="width: 35%;font-weight: bold">Konum</td>
-                <td style="width: 65%;">@Model.Location</td>
-            </tr>*@
+            <tr>
+                <td style="width: 35%;font-weight: bold">Enlem</td>
+                <td style="width: 65%;">@Model.Latitude</td>
+            </tr>
+            <tr>
+                <td style="width: 35%;font-weight: bold">Boylam</td>
+                <td style="width: 65%;">@Model.Longitude</td>
+            </tr>
             <tr>
                 <td style="width: 35%;font-weight: bold">Satın Alma Tarihi</td>
                 <td style="width: 65%;">@Model.PurchasedDate.ToShortDateString()</td>
@@ -74,9 +78,9 @@
                 <td style="width: 65%;">@Model.ServiceCharge ₺</td>
             </tr>
             @*<tr>
-                <td style="width: 35%;font-weight: bold">Konum</td>
-                <td style="width: 65%;">@Model.Location</td>
-            </tr>*@
+            <td style="width: 35%;font-weight: bold">Konum</td>
+            <td style="width: 65%;">@Model.Location</td>
+        </tr>*@
             <tr>
                 <td style="width: 35%;font-weight: bold">Rapor</td>
                 @if (@Model.TechReport == null)

@@ -212,7 +212,8 @@ namespace HelpDesk.Web.Controllers
                     Surname = user.Surname,
                     UserName = user.UserName,
                     AvatarPath = string.IsNullOrEmpty(user.AvatarPath) ? "/assets/images/icon-noprofile.png" : user.AvatarPath,
-                    //Location = user.Location
+                    Latitude = user.Latitude,
+                    Longitude = user.Longitude
                 };
 
                 return View(data);
@@ -276,7 +277,8 @@ namespace HelpDesk.Web.Controllers
                 user.Name = model.Name;
                 user.Surname = model.Surname;
                 user.PhoneNumber = model.PhoneNumber;
-                //user.Location = model.Location;
+                user.Latitude = model.Latitude;
+                user.Longitude = model.Longitude;
                 if (user.Email != model.Email)
                 {
                     //todo tekrar aktivasyon maili gönderilmeli. rolü de aktif olmamış role çevrilmeli.

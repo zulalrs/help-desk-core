@@ -28,7 +28,6 @@
                                             <th>Açıklama</th>
                                             <th>Durum</th>
                                             <th>Teknisyen</th>
-                                            <th>Konum</th>
                                             <th>Aksiyon</th>
                                         </tr>
                                     </thead>
@@ -46,10 +45,6 @@
                                                         @(current.TechnicianId == null ?
 
 "Teknisyen Atanmadı" : await MembershipTool.GetNameSurname(current.TechnicianId))
-                                                    </td>
-                                                    <td>
-
-                                                        Location
                                                     </td>
                                                     <td>
                                                         <a asp-action="Details" asp-controller="Issue" asp-route-id="@current.IssueId" class="btn btn-instagram">Detay</a>
@@ -77,10 +72,6 @@ IssueStates.KabulEdildi || current.IssueState == IssueStates.İşlemde)
 "Teknisyen Atanmadı" : await MembershipTool.GetNameSurname(current.TechnicianId))
                                                     </td>
                                                     <td>
-                                                        @*@current.Location*@
-                                                        Location
-                                                    </td>
-                                                    <td>
                                                         <a asp-action="Details" asp-controller="Issue" asp-route-id="@current.IssueId" class="btn btn-instagram">Detay</a>
                                                         <a asp-action="Timeline" asp-controller="Issue" asp-route-id="@current.IssueId" class="btn btn-instagram">Çizelge</a>
                                                     </td>
@@ -96,10 +87,6 @@ IssueStates.KabulEdildi || current.IssueState == IssueStates.İşlemde)
                                                         @(current.TechnicianId == null ?
 
 "Teknisyen Atanmadı" : await MembershipTool.GetNameSurname(current.TechnicianId))
-                                                    </td>
-                                                    <td>
-                                                        @*@current.Location*@
-                                                        Location
                                                     </td>
                                                     <td>
                                                         <a asp-action="Details" asp-controller="Issue" asp-route-id="@current.IssueId" class="btn btn-instagram">Detay</a>

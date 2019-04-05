@@ -7,10 +7,20 @@
     ViewData["Title"] = "Create";
 }
 
+@section top{
+    <style type="text/css">
+        #map {
+            height: 300px;
+            position: relative;
+            overflow: hidden;
+        }
+    </style>
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js"></script>
+}
+
 <h3 style="color:green">@(TempData["Message"] as string)</h3>
 <h3 style="color:red">@(TempData["Message2"] as string)</h3>
 <h3 style="color:red">@(TempData["Message3"] as string)</h3>
-
 
 <form asp-action="Create" asp-controller="Issue" method="post" class="form-horizontal" enctype="multipart/form-data">
 
@@ -18,7 +28,6 @@
         <hr />
 
         <div asp-validation-summary="All" class="text-danger"></div>
-        @*<input type="hidden" asp-for="CustomerId,HttpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value" />*@
         @Html.Hidden("CustomerId", HttpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value)
 
         <div class="form-group">
@@ -37,7 +46,7 @@
                 </select>
                 <span asp-validation-for="ProductType" class="text-danger" />
                 @*@Html.EnumDropDownListFor(model => model.ProductType, new { @class = "form-control input-rounded" })
-                @Html.ValidationMessageFor(model => model.ProductType, "", new { @class = "text-danger" })*@
+                    @Html.ValidationMessageFor(model => model.ProductType, "", new { @class = "text-danger" })*@
             </div>
         </div>
 
@@ -49,19 +58,30 @@
             </div>
         </div>
 
-        @*<div class="form-group">
-            @Html.LabelFor(model => model.Location, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-4">
-                @Html.EnumDropDownListFor(model => model.Location, new { @class = "form-control input-rounded" })
-                @Html.ValidationMessageFor(model => model.Location, "", new { @class = "text-danger" })
-            </div>
-        </div>*@
-
         <div class="form-group">
             <label asp-for="PurchasedDate" class="control-label col-md-2"></label>
             <div class="col-md-4">
                 <input asp-for="PurchasedDate" class="datepicker" type="date" />
                 <span asp-validation-for="PurchasedDate" class="text-danger" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-sm-9 control-label">
+                <div id="map"></div>
+                <div class="col-sm-5 control-label">
+                    <label asp-for="Latitude" class="control-label"></label>
+                    <input asp-for="Latitude" class="form-control input-rounded" id="ltd" readonly="readonly" />
+
+                </div>
+                <div class="col-sm-5 control-label">
+                    <label asp-for="Longitude" class="control-label"></label>
+                    <input asp-for="Longitude" class="form-control input-rounded" id="lng" readonly="readonly" />
+                </div>
+                <div class="col-sm-2 control-label">
+                    <br />
+                    <input type="button" class="btn btn-google" value="Bul" onclick="getLocation()" />
+                </div>
             </div>
         </div>
 
@@ -80,6 +100,8 @@
 <script src="~/assets/Scripts/jquery-3.3.1.min.js"></script>
 <script src="~/assets/Scripts/jquery-ui.min.js"></script>
 @section bottom{
+    <script type="text/javascript" src="~/js/map.js"></script>
+
     <script>
         $(function () {
             $(".datepicker").datepicker({
@@ -93,4 +115,3 @@
         });
     </script>
 }
-
