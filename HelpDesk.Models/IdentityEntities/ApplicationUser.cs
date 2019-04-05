@@ -25,7 +25,10 @@ namespace HelpDesk.Models.IdentityEntities
 
         public string AvatarPath { get; set; }
 
-        //[DisplayName("Konum")]
-        //public Locations Location { get; set; }
+        [Display(Name = "Enlem")]
+        public double? Latitude { get; set; }
+
+        [Display(Name = "Boylam")]
+        public double? Longitude { get; set; }
     }
 }

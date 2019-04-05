@@ -37,9 +37,11 @@ namespace HelpDesk.Models.Entities
         [DisplayName("Güncel Durum")]
         public IssueStates IssueState { get; set; } = IssueStates.Beklemede;
 
-        //[DisplayName("Konum")]
-        //[Required]
-        //public Locations Location { get; set; }
+        [Display(Name = "Enlem")]
+        public double? Latitude { get; set; }
+
+        [Display(Name = "Boylam")]
+        public double? Longitude { get; set; }
 
         [Required]
         [DisplayName("Satın Alma Tarihi")]

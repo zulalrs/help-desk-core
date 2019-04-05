@@ -36,6 +36,10 @@ namespace HelpDesk.DAL.Migrations
 
                     b.Property<int>("IssueState");
 
+                    b.Property<double?>("Latitude");
+
+                    b.Property<double?>("Longitude");
+
                     b.Property<string>("OperatorId");
 
                     b.Property<string>("OptReport")
@@ -188,9 +192,13 @@ namespace HelpDesk.DAL.Migrations
 
                     b.Property<bool>("EmailConfirmed");
 
+                    b.Property<double?>("Latitude");
+
                     b.Property<bool>("LockoutEnabled");
 
                     b.Property<DateTimeOffset?>("LockoutEnd");
+
+                    b.Property<double?>("Longitude");
 
                     b.Property<string>("Name")
                         .IsRequired()
