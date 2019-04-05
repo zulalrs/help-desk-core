@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HelpDesk.DAL.Migrations
 {
     [DbContext(typeof(MyContext))]
-    [Migration("20190404073431_a3")]
-    partial class a3
+    [Migration("20190405092300_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -37,6 +37,10 @@ namespace HelpDesk.DAL.Migrations
                         .HasMaxLength(250);
 
                     b.Property<int>("IssueState");
+
+                    b.Property<double?>("Latitude");
+
+                    b.Property<double?>("Longitude");
 
                     b.Property<string>("OperatorId");
 
@@ -190,9 +194,13 @@ namespace HelpDesk.DAL.Migrations
 
                     b.Property<bool>("EmailConfirmed");
 
+                    b.Property<double?>("Latitude");
+
                     b.Property<bool>("LockoutEnabled");
 
                     b.Property<DateTimeOffset?>("LockoutEnd");
+
+                    b.Property<double?>("Longitude");
 
                     b.Property<string>("Name")
                         .IsRequired()
