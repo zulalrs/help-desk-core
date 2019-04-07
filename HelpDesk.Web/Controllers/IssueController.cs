@@ -311,13 +311,13 @@ namespace HelpDesk.Web.Controllers
                 {
                     return RedirectToAction("Index", "Home");
                 }
-
-                survey.Pricing = model.Pricing;
-                survey.Satisfaction = model.Satisfaction;
-                survey.Solving = model.Solving;
-                survey.Speed = model.Speed;
-                survey.TechPoint = model.TechPoint;
-                survey.Suggestions = model.Suggestions;
+                Mapper.Map<SurveyVM, Survey>(model, survey);
+                //survey.Pricing = model.Pricing;
+                //survey.Satisfaction = model.Satisfaction;
+                //survey.Solving = model.Solving;
+                //survey.Speed = model.Speed;
+                //survey.TechPoint = model.TechPoint;
+                //survey.Suggestions = model.Suggestions;
                 survey.IsDone = true;
                 surveyRepo.Update(survey);
                 TempData["Message"] = "Anket tamamlandı.";

@@ -13,7 +13,7 @@
         <h3 style="color:forestgreen">@(TempData["Message"] as string)</h3>
         <div asp-validation-summary="All" class="text-danger"></div>
         <input type="hidden" asp-for="Id" />
-
+        <input type="hidden" asp-for="UserName" />
         <div class="form-group">
             <label asp-for="Name" class="control-label col-md-2"></label>
             <div class="col-md-4">
@@ -41,7 +41,7 @@
         <div class="form-group">
             <label asp-for="PhoneNumber" class="control-label col-md-2"></label>
             <div class="col-md-4">
-                <input type="email" asp-for="PhoneNumber" class="form-control" />
+                <input type="text" asp-for="PhoneNumber" class="form-control" />
                 <span asp-validation-for="PhoneNumber" class="text-danger"></span>
             </div>
         </div>

@@ -1,10 +1,14 @@
-﻿using HelpDesk.BLL.Account;
+﻿using AutoMapper;
+using HelpDesk.BLL.Account;
 using HelpDesk.BLL.Helpers;
 using HelpDesk.BLL.Services.Senders;
+using HelpDesk.Models.IdentityEntities;
 using HelpDesk.Models.Models;
 using HelpDesk.Models.ViewModels;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -13,10 +17,12 @@ namespace HelpDesk.Web.Controllers
     public class AdminController : BaseController
     {
         private readonly MembershipTools _membershipTools;
+        private readonly IHostingEnvironment _hostingEnvironment;
 
-        public AdminController(MembershipTools membershipTools):base(membershipTools)
+        public AdminController(MembershipTools membershipTools, IHostingEnvironment hostingEnvironment) :base(membershipTools)
         {
             _membershipTools = membershipTools;
+            _hostingEnvironment = hostingEnvironment;
         }
 
         [HttpGet]
@@ -158,17 +164,17 @@ namespace HelpDesk.Web.Controllers
                 }
 
                 ViewBag.RoleList = roller;
-                
-                var model = new UserProfileVM()
-                {
-                    AvatarPath = user.AvatarPath,
-                    Name = user.Name,
-                    Email = user.Email,
-                    Surname = user.Surname,
-                    Id = user.Id,
-                    PhoneNumber = user.PhoneNumber,
-                    UserName = user.UserName
-                };
+                var model = Mapper.Map<ApplicationUser, UserProfileVM>(user);
+                //var model = new UserProfileVM()
+                //{
+                //    AvatarPath = user.AvatarPath,
+                //    Name = user.Name,
+                //    Email = user.Email,
+                //    Surname = user.Surname,
+                //    Id = user.Id,
+                //    PhoneNumber = user.PhoneNumber,
+                //    UserName = user.UserName
+                //};
                 return View(model);
             }
             catch (Exception ex)
@@ -196,40 +202,38 @@ namespace HelpDesk.Web.Controllers
             try
             {
                 var userManager = _membershipTools.UserManager;
-                var user = await userManager.FindByIdAsync(model.Id);
+                var user = userManager.FindByIdAsync(model.Id).Result;
+                Mapper.Map<UserProfileVM,ApplicationUser>(model,user);
+                //user.Name = model.Name;
+                //user.Surname = model.Surname;
+                //user.PhoneNumber = model.PhoneNumber;
+                //user.Email = model.Email;
 
-                user.Name = model.Name;
-                user.Surname = model.Surname;
-                user.PhoneNumber = model.PhoneNumber;
-                user.Email = model.Email;
+                if (model.PostedFile != null &&
+                    model.PostedFile.Length > 0)
+                {
+                    var file = model.PostedFile;
+                    string fileName = Path.GetFileNameWithoutExtension(file.FileName);
+                    string extName = Path.GetExtension(file.FileName);
+                    fileName = StringHelpers.UrlFormatConverter(fileName);
+                    fileName += StringHelpers.GetCode();
 
-                //if (model.PostedFile != null &&
-                //    model.PostedFile.Length > 0)
-                //{
-                //    var file = model.PostedFile;
-                //    string fileName = Path.GetFileNameWithoutExtension(file.FileName);
-                //    string extName = Path.GetExtension(file.FileName);
-                //    fileName = StringHelpers.UrlFormatConverter(fileName);
-                //    fileName += StringHelpers.GetCode();
-                //    var klasoryolu = Server.MapPath("~/Upload/");
-                //    var dosyayolu = Server.MapPath("~/Upload/") + fileName + extName;
+                    var webpath = _hostingEnvironment.WebRootPath;
+                    var directorypath = Path.Combine(webpath, "Uploads");
+                    var filePath = Path.Combine(directorypath, fileName + extName);
 
-                //    if (!Directory.Exists(klasoryolu))
-                //    {
-                //        Directory.CreateDirectory(klasoryolu);
-                //    }
+                    if (!Directory.Exists(directorypath))
+                    {
+                        Directory.CreateDirectory(directorypath);
+                    }
 
-                //    file.SaveAs(dosyayolu);
+                    using (var fileStream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await file.CopyToAsync(fileStream);
+                    }
 
-                //    WebImage img = new WebImage(dosyayolu);
-                //    img.Resize(250, 250, false);
-                //    img.AddTextWatermark("TeknikServis");
-                //    img.Save(dosyayolu);
-                //    var oldPath = user.AvatarPath;
-                //    user.AvatarPath = "/Upload/" + fileName + extName;
-
-                //    System.IO.File.Delete(Server.MapPath(oldPath));
-                //}
+                    user.AvatarPath = "/Uploads/" + fileName + extName;
+                }
 
                 await userManager.UpdateAsync(user);
                 TempData["Message"] = "Güncelleme işlemi başarılı";
@@ -252,8 +256,6 @@ namespace HelpDesk.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> EditUserRoles(UpdateUserRoleVM model)
         {
-            //var userId = Request.Form[1].ToString();
-            //var rolIdler = Request.Form[2].ToString().Split(',');
             var userId = model.Id;
             var rolIdler = model.Roles;
             var roleManager = _membershipTools.RoleManager;

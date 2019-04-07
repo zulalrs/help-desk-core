@@ -272,8 +272,8 @@ namespace HelpDesk.Web.Controllers
                 user.AvatarPath = "/Uploads/" + fileName + extName;
             }
 
-            string baseUri = "http://maps.googleapis.com/maps/api/geocode/xml?latlng={0},{1}&sensor=false";
-            string location = string.Empty;
+            //string baseUri = "http://maps.googleapis.com/maps/api/geocode/xml?latlng={0},{1}&sensor=false";
+            //string location = string.Empty;
 
             try
             {
@@ -320,10 +320,6 @@ namespace HelpDesk.Web.Controllers
             try
             {
                 var user = await _membershipTools.UserManager.GetUserAsync(HttpContext.User);
-
-                //var id = _membershipTools.IHttpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
-                //var user = await _membershipTools.UserManager.FindByIdAsync(id);
-
                 var data = new ChangePasswordVM()
                 {
                     OldPassword = model.OldPassword,

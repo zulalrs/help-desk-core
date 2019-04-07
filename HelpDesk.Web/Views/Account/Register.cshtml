@@ -45,7 +45,7 @@
         <div class="page-inner login-page">
             <div id="main-wrapper" class="container-fluid">
                 <div class="row">
-                    <div class="center-block login-box" style="width:400px;">
+                    <div class="center-block login-box" style="width:450px;">
                         <h4 class="login-title">Yeni Hesap Oluştur</h4>
                         <form asp-controller="Account" asp-action="Register" method="post">
                             <div class="form-horizontal">
@@ -97,7 +97,7 @@
                                 <div class="form-group">
                                     <div class="col-md-8 col-md-offset-2">
                                         @*@Html.EnumDropDownListFor(model => model.Location, new { @class = "form-control input-rounded", @placeholder = "Konum" })
-                        @Html.ValidationMessageFor(model => model.Location, "", new { @class = "text-danger" })*@
+                            @Html.ValidationMessageFor(model => model.Location, "", new { @class = "text-danger" })*@
                                     </div>
                                 </div>
 
@@ -108,7 +108,7 @@
                                     </div>
                                 </div>
                             </div>
-                            </form>
+                        </form>
                     </div>
                 </div>
             </div>
