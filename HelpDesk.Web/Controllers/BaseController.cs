@@ -13,11 +13,10 @@ namespace HelpDesk.Web.Controllers
     {
         private readonly MembershipTools _membershipTools;
         private readonly IRepository<Issue, string> _issueRepo;
-        private MembershipTools membershipTools;
 
         public BaseController(MembershipTools membershipTools)
         {
-            this.membershipTools = membershipTools;
+            _membershipTools = membershipTools;
         }
 
         public BaseController(MembershipTools membershipTools, IRepository<Issue, string> issueRepo)

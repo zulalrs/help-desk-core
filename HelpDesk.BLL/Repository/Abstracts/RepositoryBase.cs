@@ -44,17 +44,17 @@ namespace HelpDesk.BLL.Repository.Abstracts
             this.Save();
         }
 
-        public virtual void Update(T entity)
+        public virtual int Update(T entity)
         {
             DbObject.Attach(entity);
             DbContext.Entry(entity).State = EntityState.Modified;
             //entity.UpdatedDate = DateTime.Now;
-            this.Save();
+            return Save();
         }
 
-        public void Save()
+        public int Save()
         {
-            DbContext.SaveChanges();
+           return DbContext.SaveChanges();
         }
     }
 }

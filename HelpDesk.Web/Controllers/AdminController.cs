@@ -150,7 +150,7 @@ namespace HelpDesk.Web.Controllers
                     return RedirectToAction("Index");
                 }
 
-                var roles = userManager.GetRolesAsync(user).Result;
+                var roles =await userManager.GetRolesAsync(user);
                 var roller = GetRoleList();
                 foreach (var role in roles)
                 {

@@ -1,0 +1,166 @@
+﻿@using HelpDesk.BLL.Account;
+@model HelpDesk.Models.ViewModels.IssueVM
+@inject MembershipTools MembershipTools
+@{
+    ViewBag.Title = "Atanmamış Kayıtlar";
+    Layout = "~/Views/Shared/_LayoutMain.cshtml";
+}
+
+<h3 style="color:red">@TempData["Message2"]</h3>
+
+@section top{
+    <link href="~/assets/lightbox/dist/css/lightbox.css" rel="stylesheet" />
+}
+
+<div class="col-md-6 col-md-offset-3">
+    <table id="user" class="table table-bordered table-striped" style="clear: both">
+        <tbody>
+            <tr>
+                <td style="width: 35%;font-weight: bold"></td>
+                <td style="width: 65%;">
+                    @foreach (var current in Model.PhotoPath)
+                    {
+                        <a href="@current" data-lightbox="@current"><img class="mySlides" src="@current" alt="Alternate Text" /></a>
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td style="width: 35%; font-weight: bold">Kayıt Id</td>
+                <td style="width: 65%;">@Model.IssueId</td>
+            </tr>
+            <tr>
+                <td style="width: 35%; font-weight: bold">Müşteri Adı Soyadı</td>
+                <td style="width: 65%;">@(Model.CustomerId == null ? "Müşteri Adı" : await MembershipTools.GetNameSurname(Model.CustomerId))</td>
+            </tr>
+            <tr>
+                <td style="width: 35%; font-weight: bold">Operatör Adı Soyadı</td>
+                <td style="width: 65%;">@(Model.OperatorId == null ? "Operatör Atanmadı" : await MembershipTools.GetNameSurname(Model.OperatorId))</td>
+            </tr>
+            <tr>
+                <td style="width: 35%; font-weight: bold">Teknisyen Adı Soyadı</td>
+                <td style="width: 65%;">@(Model.TechnicianId == null ? "Teknisyen Atanmadı" : await MembershipTools.GetNameSurname(Model.TechnicianId))</td>
+            </tr>
+            <tr>
+                <td style="width: 35%; font-weight: bold">Ürün</td>
+                <td style="width: 65%;">@Model.ProductType</td>
+            </tr>
+            <tr>
+                <td style="width: 35%; font-weight: bold">Açıklama</td>
+                <td style="width: 65%;">@Model.Description</td>
+            </tr>
+            <tr>
+                <td style="width: 35%; font-weight: bold">Enlem</td>
+                <td style="width: 65%;">@Model.Latitude</td>
+            </tr>
+            <tr>
+                <td style="width: 35%; font-weight: bold">Boylam</td>
+                <td style="width: 65%;">@Model.Longitude</td>
+            </tr>
+            <tr>
+                <td style="width: 35%; font-weight: bold">Garanti Durumu</td>
+                @if (@Model.WarrantyState)
+                {
+                    <td style="width: 65%;">Garantisi Var</td>
+                }
+                else
+                {
+                    <td style="width: 65%;">Garantisi Yok</td>
+                }
+            </tr>
+            <tr>
+                <td style="width: 35%; font-weight: bold">Kayıt Oluşturma Tarihi</td>
+                <td style="width: 65%;">@Model.CreatedDate.ToShortDateString()</td>
+            </tr>
+            <tr>
+                <td style="width: 35%; font-weight: bold">Servis Bedeli</td>
+                <td style="width: 65%;">@Model.ServiceCharge ₺</td>
+            </tr>
+            <tr>
+                <td style="width: 35%; font-weight: bold">Opt. Raporu</td>
+                @if (@Model.OptReport == null)
+                {
+                    <td style="width: 65%;">Rapor henüz oluşturulmamıştır.</td>
+                }
+                else
+                {
+                    <td style="width: 65%;">@Model.OptReport</td>
+                }
+            </tr>
+            <tr>
+                <td style="width: 35%; font-weight: bold">Tekn. Raporu</td>
+                @if (@Model.TechReport == null)
+                {
+                    <td style="width: 65%;">Rapor henüz oluşturulmamıştır.</td>
+                }
+                else
+                {
+                    <td style="width: 65%;">@Model.TechReport</td>
+                }
+            </tr>
+            <tr>
+                <td style="width: 35%; font-weight: bold">Kayıt Kapanma Tarihi</td>
+                @if (@Model.ClosedDate == null)
+                {
+                    <td style="width: 65%;">Arıza henüz sonuçlanmamıştır.</td>
+                }
+                else
+                {
+                    <td style="width: 65%;">@(Model.ClosedDate?.ToShortDateString())</td>
+                }
+            </tr>
+        </tbody>
+    </table>
+    @if (Model.TechnicianId == null)
+    {
+        <div class="form-group table-bordered" style="padding: 10px;padding-bottom: 15px">
+            @using (Html.BeginForm("AssignTechAsync", "Operator", FormMethod.Post, new { @class = "form-horizontal" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(x => x.IssueId)
+                <div class="form-group">
+                    @Html.LabelFor(model => model.OptReport, htmlAttributes: new { @class = "control-label col-md-4", style = "font-weight:900" })
+                    <div class="col-md-8">
+                        @Html.EditorFor(model => model.OptReport, new { htmlAttributes = new { @class = "form-control input-rounded" } })
+                        @Html.ValidationMessageFor(model => model.OptReport, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="col-md-8 col-md-offset-2">
+                    @*@Html.DropDownListFor(x => x.TechnicianId, (List<SelectListItem>)ViewBag.TechnicianList, new { @class = "form-control", size = "1" })*@
+
+                    <select asp-for="TechnicianId" class="form-control" asp-items="@(new List<SelectListItem>(ViewBag.TechnicianList))" size="1"></select>
+                </div>
+                <button class="btn btn-instagram" type="submit">Kaydet</button>
+            }
+        </div>
+    }
+</div>
+
+
+@section bottom
+    {
+    <script src="~/assets/lightbox/dist/js/lightbox.js"></script>
+
+    <script>
+        var slideIndex = 0;
+        carousel();
+
+        function carousel() {
+            var i;
+            var x = document.getElementsByClassName("mySlides");
+            for (i = 0; i < x.length; i++) {
+                x[i].style.display = "none";
+            }
+            slideIndex++;
+            if (slideIndex > x.length) { slideIndex = 1 }
+            x[slideIndex - 1].style.display = "block";
+            setTimeout(carousel, 2000); // Change image every 2 seconds
+        }
+    </script>
+
+    <script>
+        lightbox.option({
+            'resizeDuration': 200,
+            'wrapAround': true
+        })
+    </script>
+}

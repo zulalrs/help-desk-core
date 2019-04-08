@@ -12,7 +12,7 @@ namespace HelpDesk.BLL.Repository.Abstracts
         T GetById(TId id);
         void Insert(T entity);
         void Delete(T entity);
-        void Update(T entity);
-        void Save();
+        int Update(T entity);
+        int Save();
     }
 }
