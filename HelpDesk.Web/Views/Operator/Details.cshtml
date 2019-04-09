@@ -125,9 +125,12 @@
                     </div>
                 </div>
                 <div class="col-md-8 col-md-offset-2">
-                    @*@Html.DropDownListFor(x => x.TechnicianId, (List<SelectListItem>)ViewBag.TechnicianList, new { @class = "form-control", size = "1" })*@
+                    @Html.DropDownListFor(x => x.TechnicianId, ((List<SelectListItem>)ViewBag.TechnicianList).Select(x=>new SelectListItem {
+               Text=x.Text, Value=x.Value}), new { @class = "form-control", size = "1" })
 
-                    <select asp-for="TechnicianId" class="form-control" asp-items="@(new List<SelectListItem>(ViewBag.TechnicianList))" size="1"></select>
+                    @*<select asp-for="TechnicianId" class="form-control" asp-items="@(List<SelectListItem>)ViewBag.TechnicianList" size="1"></select>
+
+                    @Html.DropDownListFor(x=>x.TechnicianId,((List<string>)ViewBag.domains).Select(m => new SelectListItem { Text = m, Value = m }))*@
                 </div>
                 <button class="btn btn-instagram" type="submit">Kaydet</button>
             }

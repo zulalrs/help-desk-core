@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace HelpDesk.Web.Controllers
 {
@@ -41,7 +42,7 @@ namespace HelpDesk.Web.Controllers
             return data;
         }
 
-        protected async System.Threading.Tasks.Task<List<SelectListItem>> GetTechnicianList()
+        protected async Task<List<SelectListItem>> GetTechnicianList()
         {
             var data = new List<SelectListItem>();
             var userManager = _membershipTools.UserManager;
@@ -52,7 +53,7 @@ namespace HelpDesk.Web.Controllers
 
             foreach (var user in users)
             {
-                if (await userManager.IsInRoleAsync(user,IdentityRoles.Technician.ToString()))
+                if (await userManager.IsInRoleAsync(user, IdentityRoles.Technician.ToString()))
                 {
                     if (!techIds.Contains(user.Id))
                     {
