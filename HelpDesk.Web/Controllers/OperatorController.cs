@@ -99,6 +99,7 @@ namespace HelpDesk.Web.Controllers
         [Authorize(Roles = "Admin, Operator")]
         public ActionResult AllIssues()
         {
+
             try
             {
                 var data = _issueRepo.GetAll().Select(x => Mapper.Map<IssueVM>(x)).ToList();
@@ -113,6 +114,34 @@ namespace HelpDesk.Web.Controllers
                 {
                     Text = $"Bir hata oluştu {ex.Message}",
                     ActionName = "AllIssues",
+                    ControllerName = "Operator",
+                    ErrorCode = 500
+                };
+                return RedirectToAction("Error500", "Home");
+            }
+            return View();
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Operator")]
+        public async Task<ActionResult> AssignedIssues()
+        {
+            try
+            {
+                var user = await _membershipTools.UserManager.GetUserAsync(HttpContext.User);
+                var id = user.Id;
+                var data = _issueRepo.GetAll(x => x.OperatorId == id && x.TechnicianId == null).Select(x => Mapper.Map<IssueVM>(x)).ToList();
+                if (data != null)
+                {
+                    return View(data);
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["Message"] = new ErrorVM()
+                {
+                    Text = $"Bir hata oluştu {ex.Message}",
+                    ActionName = "AssignedIssues",
                     ControllerName = "Operator",
                     ErrorCode = 500
                 };
