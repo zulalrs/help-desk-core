@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using HelpDesk.BLL.Account;
 using HelpDesk.BLL.Repository.Abstracts;
+using HelpDesk.BLL.Services.Senders;
 using HelpDesk.Models.Entities;
 using HelpDesk.Models.Enums;
 using HelpDesk.Models.IdentityEntities;
@@ -20,7 +21,7 @@ namespace HelpDesk.Web.Controllers
         private readonly IRepository<Issue, string> _issueRepo;
         private readonly IRepository<IssueLog, string> _issueLogRepo;
 
-        public OperatorController(MembershipTools membershipTools, IRepository<Issue, string> issueRepo, IRepository<IssueLog, string> issueLogRepo) : base(membershipTools,issueRepo)
+        public OperatorController(MembershipTools membershipTools, IRepository<Issue, string> issueRepo, IRepository<IssueLog, string> issueLogRepo) : base(membershipTools, issueRepo)
         {
             _membershipTools = membershipTools;
             _issueRepo = issueRepo;
@@ -74,7 +75,7 @@ namespace HelpDesk.Web.Controllers
             if (issue.OperatorId == null)
             {
                 issue.OperatorId = userid;
-                if (_issueRepo.Update(issue)>0)
+                if (_issueRepo.Update(issue) > 0)
                 {
                     issue.IssueState = IssueStates.KabulEdildi;
                     data.IssueState = issue.IssueState;
@@ -148,6 +149,65 @@ namespace HelpDesk.Web.Controllers
                 return RedirectToAction("Error500", "Home");
             }
             return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin, Operator")]
+        public async Task<ActionResult> AssignTechAsync(IssueVM model)
+        {
+            try
+            {
+                var issue = _issueRepo.GetById(model.IssueId);
+                issue.TechnicianId = model.TechnicianId;
+                issue.IssueState = IssueStates.Atandı;
+                issue.OptReport = model.OptReport;
+                _issueRepo.Update(issue);
+                var technician = await _membershipTools.NewUserStore().FindByIdAsync(issue.TechnicianId);
+                TempData["Message"] =
+                    $"{issue.Description} adlı arızaya {technician.Name}  {technician.Surname} teknisyeni atandı.";
+
+                var customer = await _membershipTools.UserManager.FindByIdAsync(issue.CustomerId);
+                var emailService = new EmailService();
+                var body = $"Merhaba <b>{_membershipTools.GetNameSurname(issue.CustomerId)}</b><br>{issue.Description} adlı arızanız onaylanmıştır ve görevli teknisyen en kısa sürede yola çıkacaktır.";
+                await emailService.SendAsync(new EmailModel()
+                {
+                    Body = body,
+                    Subject = $"{issue.Description} adlı arıza hk."
+                }, customer.Email);
+
+                var issueLog = new IssueLog()
+                {
+                    IssueId = issue.Id,
+                    Description = "Teknisyene atandı.",
+                    FromWhom = "Operatör"
+                };
+                _issueLogRepo.Insert(issueLog);
+
+                return RedirectToAction("AllIssues", "Operator");
+            }
+            //catch (DbEntityValidationException ex)
+            //{
+            //    TempData["Message"] = new ErrorVM()
+            //    {
+            //        Text = $"Bir hata oluştu: {EntityHelpers.ValidationMessage(ex)}",
+            //        ActionName = "AssignTechAsync",
+            //        ControllerName = "Operator",
+            //        ErrorCode = 500
+            //    };
+            //    return RedirectToAction("Error500", "Home");
+            //}
+            catch (Exception ex)
+            {
+                TempData["Message"] = new ErrorVM()
+                {
+                    Text = $"Bir hata oluştu {ex.Message}",
+                    ActionName = "AssignTechAsync",
+                    ControllerName = "Operator",
+                    ErrorCode = 500
+                };
+                return RedirectToAction("Error500", "Home");
+            }
         }
     }
 }
