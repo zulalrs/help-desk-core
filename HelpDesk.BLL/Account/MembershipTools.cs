@@ -73,7 +73,7 @@ namespace HelpDesk.BLL.Account
                 foreach (var item in roles)
                 {
                     roleuser = RoleManager.FindByNameAsync(item).Result;
-                    role = roleuser.ToString();
+                    role += roleuser.ToString()+" ";
                 }
             }
 
@@ -161,7 +161,7 @@ namespace HelpDesk.BLL.Account
 
         public async Task<string> GetTechPoint(string techId)
         {
-            var tech = await UserManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+            var tech = await UserManager.FindByIdAsync(techId);
             if (tech == null)
                 return "0";
 

@@ -55,7 +55,7 @@ namespace HelpDesk.Web.Controllers
         [Authorize(Roles = "Operator")]
         public async Task<ActionResult> Details(string id)
         {
-            ViewBag.TechnicianList = GetTechnicianList();
+            ViewBag.TechnicianList = await GetTechnicianList();
 
             var issue = _issueRepo.GetById(id);
             if (issue == null)

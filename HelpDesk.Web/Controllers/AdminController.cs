@@ -272,7 +272,7 @@ namespace HelpDesk.Web.Controllers
 
             foreach (var identityUserRole in roles)
             {
-                await userManager.RemoveFromRoleAsync(user, roleManager.FindByNameAsync(identityUserRole).ToString());
+                await userManager.RemoveFromRoleAsync(user, identityUserRole);
             }
 
             for (int i = 0; i < seciliRoller.Length; i++)

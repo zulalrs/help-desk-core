@@ -59,7 +59,7 @@ namespace HelpDesk.Web.Controllers
                     {
                         data.Add(new SelectListItem()
                         {
-                            Text = $"{user.Name} {user.Surname} ({ _membershipTools.GetTechPoint(user.Id)})",
+                            Text = $"{user.Name} {user.Surname} ({await _membershipTools.GetTechPoint(user.Id)})",
                             Value = user.Id
                         });
                     }
