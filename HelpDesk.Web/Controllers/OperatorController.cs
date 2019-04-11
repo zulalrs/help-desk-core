@@ -169,7 +169,7 @@ namespace HelpDesk.Web.Controllers
 
                 var customer = await _membershipTools.UserManager.FindByIdAsync(issue.CustomerId);
                 var emailService = new EmailService();
-                var body = $"Merhaba <b>{_membershipTools.GetNameSurname(issue.CustomerId)}</b><br>{issue.Description} adlı arızanız onaylanmıştır ve görevli teknisyen en kısa sürede yola çıkacaktır.";
+                var body = $"Merhaba <b>{await _membershipTools.GetNameSurname(issue.CustomerId)}</b><br>{issue.Description} adlı arızanız onaylanmıştır ve görevli teknisyen en kısa sürede yola çıkacaktır.";
                 await emailService.SendAsync(new EmailModel()
                 {
                     Body = body,

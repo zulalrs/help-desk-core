@@ -556,7 +556,7 @@ namespace HelpDesk.Web.Controllers
 
                 return Json(new ResponseData()
                 {
-                    data = $"{ _membershipTools.GetNameSurname(data.TechnicianId)} ({minutes} dk)",
+                    data = $"{await _membershipTools.GetNameSurname(data.TechnicianId)} ({minutes} dk)",
                     success = true,
                 });
             }
