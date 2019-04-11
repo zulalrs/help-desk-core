@@ -1,13 +1,17 @@
 ﻿using AutoMapper;
 using HelpDesk.BLL.Account;
 using HelpDesk.BLL.Helpers;
+using HelpDesk.BLL.Repository.Abstracts;
 using HelpDesk.BLL.Services.Senders;
+using HelpDesk.Models.Entities;
+using HelpDesk.Models.Enums;
 using HelpDesk.Models.IdentityEntities;
 using HelpDesk.Models.Models;
 using HelpDesk.Models.ViewModels;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -18,11 +22,15 @@ namespace HelpDesk.Web.Controllers
     {
         private readonly MembershipTools _membershipTools;
         private readonly IHostingEnvironment _hostingEnvironment;
+        private readonly IRepository<Issue, string> _issueRepo;
+        private readonly IRepository<Survey, string> _surveyRepo;
 
-        public AdminController(MembershipTools membershipTools, IHostingEnvironment hostingEnvironment) :base(membershipTools)
+        public AdminController(MembershipTools membershipTools, IHostingEnvironment hostingEnvironment, IRepository<Issue, string> issueRepo, IRepository<Survey, string> surveyRepo) :base(membershipTools)
         {
             _membershipTools = membershipTools;
             _hostingEnvironment = hostingEnvironment;
+            _issueRepo = issueRepo;
+            _surveyRepo = surveyRepo;
         }
 
         [HttpGet]
@@ -282,5 +290,285 @@ namespace HelpDesk.Web.Controllers
 
             return RedirectToAction("EditUser", new { id = userId });
         }
+
+        [HttpGet]
+        public ActionResult Reports()
+        {
+            try
+            {
+                var issueRepo =_issueRepo;
+                var surveyRepo = _surveyRepo;
+                var issueList = issueRepo.GetAll(x => x.SurveyId != null).ToList();
+
+                var surveyList = surveyRepo.GetAll().Where(x => x.IsDone).ToList();
+                var totalSpeed = 0.0;
+                var totalTech = 0.0;
+                var totalPrice = 0.0;
+                var totalSatisfaction = 0.0;
+                var totalSolving = 0.0;
+                var count = issueList.Count;
+
+                if (count == 0)
+                {
+                    TempData["Message2"] = "Rapor oluşturmak için yeterli kayıt bulunamadı.";
+                    return RedirectToAction("Index", "Home");
+                }
+
+                foreach (var survey in surveyList)
+                {
+                    totalSpeed += survey.Speed;
+                    totalTech += survey.TechPoint;
+                    totalPrice += survey.Pricing;
+                    totalSatisfaction += survey.Satisfaction;
+                    totalSolving += survey.Solving;
+                }
+
+                var totalDays = 0;
+                foreach (var issue in issueList)
+                {
+                    totalDays += issue.ClosedDate.Value.DayOfYear - issue.CreatedDate.DayOfYear;
+                }
+
+                ViewBag.AvgSpeed = totalSpeed / count;
+                ViewBag.AvgTech = totalTech / count;
+                ViewBag.AvgPrice = totalPrice / count;
+                ViewBag.AvgSatisfaction = totalSatisfaction / count;
+                ViewBag.AvgSolving = totalSolving / count;
+                ViewBag.AvgTime = totalDays / issueList.Count;
+
+                return View(surveyList);
+            }
+            catch (Exception ex)
+            {
+                TempData["Message"] = new ErrorVM()
+                {
+                    Text = $"Bir hata oluştu {ex.Message}",
+                    ActionName = "Reports",
+                    ControllerName = "Admin",
+                    ErrorCode = 500
+                };
+                return RedirectToAction("Error500", "Home");
+            }
+        }
+        [HttpGet]
+        public JsonResult GetDailyReport()
+        {
+            try
+            {
+                var dailyIssues = _issueRepo.GetAll(x => x.CreatedDate.DayOfYear == DateTime.Now.DayOfYear).Count;
+
+                return Json(new ResponseData()
+                {
+                    data = dailyIssues,
+                    success = true
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new ResponseData()
+                {
+                    data = 0,
+                    message = ex.Message,
+                    success = false
+                });
+            }
+        }
+        [HttpGet]
+        public JsonResult GetWeeklyReport()
+        {
+            try
+            {
+                List<WeeklyReport> weeklies = new List<WeeklyReport>();
+
+                for (int i = 6; i >= 0; i--)
+                {
+                    var data = _issueRepo.GetAll(x => x.CreatedDate.DayOfYear == DateTime.Now.AddDays(-i).DayOfYear).Count();
+                    weeklies.Add(new WeeklyReport()
+                    {
+                        date = DateTime.Now.AddDays(-i).ToShortDateString(),
+                        count = data
+                    });
+                }
+
+                return Json(new ResponseData()
+                {
+                    data = weeklies,
+                    success = true
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new ResponseData()
+                {
+                    message = ex.Message,
+                    success = false
+                });
+            }
+        }
+
+        [HttpGet]
+        public JsonResult GetDailyProfit()
+        {
+            try
+            {
+                var dailyIssues = _issueRepo.GetAll(x => x.CreatedDate.DayOfYear == DateTime.Now.DayOfYear && x.ClosedDate != null);
+
+                decimal data = 0;
+                foreach (var item in dailyIssues)
+                {
+                    data += item.ServiceCharge;
+                }
+                return Json(new ResponseData()
+                {
+                    data = data,
+                    success = true
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new ResponseData()
+                {
+                    message = ex.Message,
+                    success = false
+                });
+            }
+        }
+
+        [HttpGet]
+        public JsonResult GetSurveyReport()
+        {
+            try
+            {
+                var surveys = _surveyRepo;
+                var count = surveys.GetAll().Count;
+                var quest1 = surveys.GetAll().Select(x => x.Satisfaction).Sum() / count;
+                var quest2 = surveys.GetAll().Select(x => x.TechPoint).Sum() / count;
+                var quest3 = surveys.GetAll().Select(x => x.Speed).Sum() / count;
+                var quest4 = surveys.GetAll().Select(x => x.Pricing).Sum() / count;
+                var quest5 = surveys.GetAll().Select(x => x.Solving).Sum() / count;
+
+                var data = new List<SurveyReport>();
+                data.Add(new SurveyReport()
+                {
+                    question = "Genel Memnuniyet",
+                    point = quest1
+                });
+                data.Add(new SurveyReport()
+                {
+                    question = "Teknisyen",
+                    point = quest2
+                });
+                data.Add(new SurveyReport()
+                {
+                    question = "Hız",
+                    point = quest3
+                });
+                data.Add(new SurveyReport()
+                {
+                    question = "Fiyat",
+                    point = quest4
+                });
+                data.Add(new SurveyReport()
+                {
+                    question = "Çözüm Odaklılık",
+                    point = quest5
+                });
+
+                return Json(new ResponseData()
+                {
+                    message = $"{data.Count} adet kayıt bulundu",
+                    success = true,
+                    data = data
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new ResponseData()
+                {
+                    message = "Kayıt bulunamadı " + ex.Message,
+                    success = false
+                });
+            }
+        }
+
+        [HttpGet]
+        public async Task<JsonResult> GetTechReport()
+        {
+            try
+            {
+                var userManager = _membershipTools.UserManager;
+                var users = userManager.Users.ToList();
+                var data = new List<TechReport>();
+                foreach (var user in users)
+                {
+                    if (await userManager.IsInRoleAsync(user, IdentityRoles.Technician.ToString()))
+                    {
+                        var techIssues = _issueRepo.GetAll(x => x.TechnicianId == user.Id);
+                        foreach (var issue in techIssues)
+                        {
+                            if (issue.ClosedDate != null)
+                            {
+                                data.Add(new TechReport()
+                                {
+                                    nameSurname = await _membershipTools.GetNameSurname(user.Id),
+                                    point = double.Parse(await _membershipTools.GetTechPoint(user.Id))
+                                });
+                            }
+                        }
+                    }
+                }
+
+                return Json(new ResponseData()
+                {
+                    success = true,
+                    data = data
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new ResponseData()
+                {
+                    message = $"{ex.Message}",
+                    success = false
+                });
+            }
+        }
+
+        [HttpGet]
+        public async Task<JsonResult> GetBestTech()
+        {
+            try
+            {
+                var userManager = _membershipTools.UserManager;
+                var users = userManager.Users.ToList();
+                var unclosed = _issueRepo.GetAll(x => x.ClosedDate != null);
+                var minutes = unclosed.Min(x => x.ClosedDate?.Minute - x.CreatedDate.Minute);
+                var data = new Issue();
+                foreach (var user in users)
+                {
+                    if (await userManager.IsInRoleAsync(user, IdentityRoles.Technician.ToString()))
+                    {
+                        data = _issueRepo.GetAll(x => x.TechnicianId == user.Id && x.ClosedDate?.Minute - x.CreatedDate.Minute == minutes).FirstOrDefault();
+                        if (data != null)
+                            break;
+                    }
+                }
+
+                return Json(new ResponseData()
+                {
+                    data = $"{ _membershipTools.GetNameSurname(data.TechnicianId)} ({minutes} dk)",
+                    success = true,
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new ResponseData()
+                {
+                    message = $"{ex.Message}",
+                    success = false
+                });
+            }
+        }
+
     }
 }
