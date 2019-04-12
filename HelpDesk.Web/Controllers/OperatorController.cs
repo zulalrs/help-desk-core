@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using HelpDesk.BLL.Account;
+using HelpDesk.BLL.Repository;
 using HelpDesk.BLL.Repository.Abstracts;
 using HelpDesk.BLL.Services.Senders;
 using HelpDesk.Models.Entities;
@@ -23,12 +24,16 @@ namespace HelpDesk.Web.Controllers
         private readonly MembershipTools _membershipTools;
         private readonly IRepository<Issue, string> _issueRepo;
         private readonly IRepository<IssueLog, string> _issueLogRepo;
+        private readonly IRepository<Photograph, string> _photoRepo;
+
         List<SelectListItem> Technicians = new List<SelectListItem>();
-        public OperatorController(MembershipTools membershipTools, IRepository<Issue, string> issueRepo, IRepository<IssueLog, string> issueLogRepo) : base(membershipTools, issueRepo)
+
+        public OperatorController(MembershipTools membershipTools, IRepository<Issue, string> issueRepo, IRepository<IssueLog, string> issueLogRepo, IRepository<Photograph, string> photoRepo) : base(membershipTools, issueRepo)
         {
             _membershipTools = membershipTools;
             _issueRepo = issueRepo;
             _issueLogRepo = issueLogRepo;
+            _photoRepo = photoRepo;
         }
 
         public IActionResult Index()
@@ -76,6 +81,7 @@ namespace HelpDesk.Web.Controllers
 
             var data = Mapper.Map<Issue, IssueVM>(issue);
 
+            var techIds = _issueRepo.GetAll(x => x.IssueState == IssueStates.İşlemde || x.IssueState == IssueStates.Atandı).Select(x => x.TechnicianId).ToList();
             var technicians = _membershipTools.UserManager.GetUsersInRoleAsync("Technician").Result;
 
             for (int i = 0; i < technicians.Count; i++)
@@ -83,22 +89,25 @@ namespace HelpDesk.Web.Controllers
                 var distance = 0.0;
                 string distanceString = "";
                 var technician = technicians[i];
-                if (technician.Latitude.HasValue && technician.Longitude.HasValue && data.Latitude.HasValue && data.Longitude.HasValue)
+                if (!techIds.Contains(technician.Id))
                 {
-                    var failureCoordinate = new GeoCoordinate(data.Latitude.Value, data.Longitude.Value);
-                    var technicianCoordinate = new GeoCoordinate(technician.Latitude.Value, technician.Longitude.Value);
+                    if (technician.Latitude.HasValue && technician.Longitude.HasValue && data.Latitude.HasValue && data.Longitude.HasValue)
+                    {
+                        var issueCoordinate = new GeoCoordinate(data.Latitude.Value, data.Longitude.Value);
+                        var technicianCoordinate = new GeoCoordinate(technician.Latitude.Value, technician.Longitude.Value);
 
-                    distance = failureCoordinate.GetDistanceTo(technicianCoordinate) / 1000;
-                    distanceString = $"(~{Convert.ToInt32(distance)} km)";
+                        distance = issueCoordinate.GetDistanceTo(technicianCoordinate) / 1000;
+                        distanceString = $"(~{Convert.ToInt32(distance)} km)";
+                    }
+                    
+                    Technicians.Add(new SelectListItem()
+                    {
+                        Text = technician.Name + " " + technician.Surname + " (" + await _membershipTools.GetTechPoint(user.Id) + ")" + distanceString,
+                        Value = technician.Id
+                    });
                 }
-
-
-                Technicians.Add(new SelectListItem()
-                {
-                    Text = technician.Name + " " + technician.Surname + " " + await _membershipTools.GetTechPoint(user.Id) + distanceString,
-                    Value = technician.Id
-                });
-
+                else
+                    continue;
             }
 
             ViewBag.TechnicianList = Technicians;

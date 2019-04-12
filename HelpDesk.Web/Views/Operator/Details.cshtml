@@ -112,7 +112,7 @@
     @if (Model.TechnicianId == null)
     {
         <div class="form-group table-bordered" style="padding: 10px;padding-bottom: 15px">
-            @using (Html.BeginForm("AssignTechAsync", "Operator", FormMethod.Post, new { @class = "form-horizontal" }))
+            @using (Html.BeginForm("AssignTech", "Operator", FormMethod.Post, new { @class = "form-horizontal" }))
             {
                 @Html.AntiForgeryToken()
                 @Html.HiddenFor(x => x.IssueId)

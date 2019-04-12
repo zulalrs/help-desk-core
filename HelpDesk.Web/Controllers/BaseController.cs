@@ -22,10 +22,10 @@ namespace HelpDesk.Web.Controllers
 
         public BaseController(MembershipTools membershipTools, IRepository<Issue, string> issueRepo)
         {
-
             _membershipTools = membershipTools;
             _issueRepo = issueRepo;
         }
+
         protected List<SelectListItem> GetRoleList()
         {
             var data = new List<SelectListItem>();
