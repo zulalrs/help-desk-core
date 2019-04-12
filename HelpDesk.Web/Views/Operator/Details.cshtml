@@ -19,7 +19,7 @@
                 <td style="width: 65%;">
                     @foreach (var current in Model.PhotoPath)
                     {
-                        <a href="@current" data-lightbox="@current"><img class="mySlides" src="@current" alt="Alternate Text" /></a>
+                        <a href="@current" data-lightbox="@current"><img class="mySlides" src="@current" alt="Alternate Text" width="200" height="200" /></a>
                     }
                 </td>
             </tr>
@@ -124,9 +124,6 @@
                     </div>
                 </div>
                 <div class="col-md-8 col-md-offset-2">
-                    @*@Html.DropDownListFor(x => x.TechnicianId, ((List<SelectListItem>)ViewBag.TechnicianList).Select(x=>new SelectListItem {
-               Text=x.Text, Value=x.Value}), new { @class = "form-control", size = "1" })*@
-
                     <select asp-for="TechnicianId" class="form-control" asp-items="@(List<SelectListItem>)ViewBag.TechnicianList" size="1"></select>
                 </div>
                 <button class="btn btn-instagram" type="submit">Kaydet</button>

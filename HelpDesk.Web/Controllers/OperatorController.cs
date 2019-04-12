@@ -67,6 +67,9 @@ namespace HelpDesk.Web.Controllers
             //ViewBag.TechnicianList = await GetTechnicianList();
 
             var issue = _issueRepo.GetById(id);
+            var photoPath = _photoRepo.GetAll(x => x.IssueId == id).Select(y=>y.Path).ToList();
+            issue.PhotoPath = photoPath;
+
             if (issue == null)
             {
                 TempData["Message2"] = "Arıza kaydı bulunamadi.";
