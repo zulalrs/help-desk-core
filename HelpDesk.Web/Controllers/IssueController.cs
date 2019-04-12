@@ -9,6 +9,7 @@ using HelpDesk.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System;
 using System.IO;
 using System.Linq;
@@ -35,7 +36,7 @@ namespace HelpDesk.Web.Controllers
         }
 
         [HttpGet]
-        //[Route("arizakayit_anasayfa")]
+        [Route("arizakayit_anasayfa")]
         public async Task<ActionResult> Index()
         {
             try
@@ -50,29 +51,30 @@ namespace HelpDesk.Web.Controllers
             }
             catch (Exception ex)
             {
-                TempData["Message"] = new ErrorVM()
+                var errorVM = new ErrorVM()
                 {
                     Text = $"Bir hata oluştu {ex.Message}",
                     ActionName = "Index",
                     ControllerName = "Issue",
-                    ErrorCode = 500
+                    ErrorCode = "500"
                 };
+                TempData["ErrorMessage"] = JsonConvert.SerializeObject(errorVM);
                 return RedirectToAction("Error500", "Home");
             }
             return View();
         }
 
         [HttpGet]
-        ////[Route("yenikayitolustur")]
-        ////[Authorize(Roles = "Admin, Customer")]
+        [Route("yenikayitolustur")]
+        [Authorize(Roles = "Admin, Customer")]
         public ActionResult Create()
         {
             return View();
         }
 
         [HttpPost]
-        //[Route("yenikayitolustur")]
-        ////[Authorize(Roles = "Admin, Customer")]
+        [Route("yenikayitolustur")]
+        [Authorize(Roles = "Admin, Customer")]
         public async Task<ActionResult> Create(IssueVM model)
         {
             if (!ModelState.IsValid)
@@ -220,32 +222,22 @@ namespace HelpDesk.Web.Controllers
 
                 return RedirectToAction("Index", "Issue");
             }
-            //catch (DbEntityValidationException ex)
-            //{
-            //    TempData["Message3"] = new ErrorVM()
-            //    {
-            //        Text = $"Bir hata oluştu: {EntityHelpers.ValidationMessage(ex)}",
-            //        ActionName = "Create",
-            //        ControllerName = "Issue",
-            //        ErrorCode = 500
-            //    };
-            //    return RedirectToAction("Error500", "Home");
-            //}
             catch (Exception ex)
             {
-                TempData["Message2"] = new ErrorVM()
+                var errorVM = new ErrorVM()
                 {
                     Text = $"Bir hata oluştu {ex.Message}",
                     ActionName = "Create",
                     ControllerName = "Issue",
-                    ErrorCode = 500
+                    ErrorCode = "500"
                 };
+                TempData["ErrorMessage"] = JsonConvert.SerializeObject(errorVM);
                 return RedirectToAction("Error500", "Home");
             }
         }
 
         [HttpGet]
-        //[Route("kayit_detay/{id}")]
+        [Route("kayit_detay/{id}")]
         public ActionResult Details(string id)
         {
             var issue = _issueRepo.GetById(id);
@@ -260,7 +252,7 @@ namespace HelpDesk.Web.Controllers
         }
 
         [HttpGet]
-        //[Authorize(Roles = "Customer")]
+        [Authorize(Roles = "Customer")]
         public ActionResult Survey(string code)
         {
             try
@@ -282,20 +274,21 @@ namespace HelpDesk.Web.Controllers
             }
             catch (Exception ex)
             {
-                TempData["Message2"] = new ErrorVM()
+                var errorVM = new ErrorVM()
                 {
                     Text = $"Bir hata oluştu {ex.Message}",
                     ActionName = "Survey",
                     ControllerName = "Issue",
-                    ErrorCode = 500
+                    ErrorCode = "500"
                 };
+                TempData["ErrorMessage"] = JsonConvert.SerializeObject(errorVM);
                 return RedirectToAction("Error500", "Home");
             }
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        //[Authorize(Roles = "Customer")]
+        [Authorize(Roles = "Customer")]
         public ActionResult Survey(SurveyVM model)
         {
             if (!ModelState.IsValid)
@@ -325,20 +318,21 @@ namespace HelpDesk.Web.Controllers
             }
             catch (Exception ex)
             {
-                TempData["Message2"] = new ErrorVM()
+                var errorVM = new ErrorVM()
                 {
                     Text = $"Bir hata oluştu {ex.Message}",
                     ActionName = "Survey",
                     ControllerName = "Issue",
-                    ErrorCode = 500
+                    ErrorCode = "500"
                 };
+                TempData["ErrorMessage"] = JsonConvert.SerializeObject(errorVM);
                 return RedirectToAction("Error500", "Home");
             }
         }
 
 
         [HttpGet]
-        //[Route("IssueTimeline/{id}")]
+        [Route("IssueTimeline/{id}")]
         public ActionResult Timeline(string id)
         {
             var data = _issuelogRepo.GetAll(x => x.IssueId == id).OrderBy(x => x.CreatedDate).ToList();
@@ -348,7 +342,7 @@ namespace HelpDesk.Web.Controllers
         }
 
         [HttpGet]
-        //[Authorize(Roles = "Admin, Operator")]
+        [Authorize(Roles = "Admin, Operator")]
         public ActionResult ListAll()
         {
             var data = _issueRepo.GetAll(x => x.ClosedDate != null);

@@ -16,6 +16,7 @@ using EmailService = HelpDesk.BLL.Services.Senders.EmailService;
 
 namespace HelpDesk.Web.Controllers
 {
+    [Authorize]
     public class AccountController : BaseController
     {
         private readonly IHostingEnvironment _hostingEnvironment;
@@ -149,6 +150,7 @@ namespace HelpDesk.Web.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult Login()
         {
             if (HttpContext.User.Identity.IsAuthenticated)
@@ -161,6 +163,8 @@ namespace HelpDesk.Web.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
+        [AllowAnonymous]
         public async Task<IActionResult> Login(LoginVM model)
         {
             try
@@ -194,6 +198,7 @@ namespace HelpDesk.Web.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult> Logout()
         {
             await _membershipTools.SignInManager.SignOutAsync();
@@ -201,6 +206,7 @@ namespace HelpDesk.Web.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult> UserProfile()
         {
             try
@@ -237,6 +243,7 @@ namespace HelpDesk.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<ActionResult> UserProfile(UserProfileVM model)
         {
             var user = await _membershipTools.UserManager.FindByIdAsync(model.Id);
