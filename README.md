@@ -1,5 +1,5 @@
 # Help Desk
-Arıza kaydı oluşturma, teknisyen atama ve takibini yapma, müşteri memnuniyet anketi oluşturma ve raporlama yapma amacıyla oluşturulmuş bir ASP.NET MVC projesidir.
+Arıza kaydı oluşturma, teknisyen atama ve takibini yapma, müşteri memnuniyet anketi oluşturma ve raporlama yapma amacıyla oluşturulmuş bir ASP.NET Core projesidir.
 
 ### Öngereklilikler
 
