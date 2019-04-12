@@ -1,9 +1,7 @@
-﻿using System;
-using AutoMapper;
+﻿using AutoMapper;
 using HelpDesk.BLL.Account;
 using HelpDesk.BLL.Repository;
 using HelpDesk.BLL.Repository.Abstracts;
-using HelpDesk.BLL.Services.Senders;
 using HelpDesk.DAL;
 using HelpDesk.Models.Entities;
 using HelpDesk.Models.IdentityEntities;
@@ -16,7 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using System;
 
 namespace HelpDesk.Web
 {
