@@ -1,7 +1,8 @@
 ﻿@using HelpDesk.Models.ViewModels
+@using Newtonsoft.Json
 @{
     Layout = null;
-    var message = TempData["Message"] as ErrorVM;
+    var message = JsonConvert.DeserializeObject<ErrorVM>((string)TempData["ErrorMessage"]);
 }
 
 <!DOCTYPE html>

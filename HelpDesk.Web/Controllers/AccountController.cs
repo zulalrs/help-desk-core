@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System;
 using System.IO;
 using System.Linq;
@@ -135,13 +136,14 @@ namespace HelpDesk.Web.Controllers
             }
             catch (Exception ex)
             {
-                TempData["Message"] = new ErrorVM()
+                var errorVM = new ErrorVM()
                 {
                     Text = $"Bir hata oluştu {ex.Message}",
                     ActionName = "Register",
                     ControllerName = "Account",
-                    ErrorCode = 500
+                    ErrorCode = "500"
                 };
+                TempData["ErrorMessage"] = JsonConvert.SerializeObject(errorVM);
                 return RedirectToAction("Error500", "Home");
             }
         }
@@ -179,13 +181,14 @@ namespace HelpDesk.Web.Controllers
             }
             catch (Exception ex)
             {
-                TempData["Message"] = new ErrorVM()
+                var errorVM = new ErrorVM()
                 {
                     Text = $"Bir hata oluştu {ex.Message}",
                     ActionName = "Index",
                     ControllerName = "Account",
-                    ErrorCode = 500
+                    ErrorCode = "500"
                 };
+                TempData["ErrorMessage"] = JsonConvert.SerializeObject(errorVM);
                 return RedirectToAction("Error500", "Home");
             }
         }
@@ -220,13 +223,14 @@ namespace HelpDesk.Web.Controllers
             }
             catch (Exception ex)
             {
-                TempData["Message"] = new ErrorVM()
+                var errorVM = new ErrorVM()
                 {
                     Text = $"Bir hata oluştu {ex.Message}",
                     ActionName = "UserProfile",
                     ControllerName = "Account",
-                    ErrorCode = 500
+                    ErrorCode = "500"
                 };
+                TempData["ErrorMessage"] = JsonConvert.SerializeObject(errorVM);
                 return RedirectToAction("Error500", "Home");
             }
         }
@@ -294,13 +298,14 @@ namespace HelpDesk.Web.Controllers
             }
             catch (Exception ex)
             {
-                TempData["Message"] = new ErrorVM()
+                var errorVM = new ErrorVM()
                 {
                     Text = $"Bir hata oluştu: {ex.Message}",
                     ActionName = "UserProfile",
                     ControllerName = "Account",
-                    ErrorCode = 500
+                    ErrorCode = "500"
                 };
+                TempData["ErrorMessage"] = JsonConvert.SerializeObject(errorVM);
                 return RedirectToAction("Error500", "Home");
             }
         }
@@ -357,13 +362,14 @@ namespace HelpDesk.Web.Controllers
             }
             catch (Exception ex)
             {
-                TempData["Message"] = new ErrorVM()
+                var errorVM = new ErrorVM()
                 {
                     Text = $"Bir hata oluştu {ex.Message}",
                     ActionName = "ChangePassword",
                     ControllerName = "Account",
-                    ErrorCode = 500
+                    ErrorCode = "500"
                 };
+                TempData["ErrorMessage"] = JsonConvert.SerializeObject(errorVM);
                 return RedirectToAction("Error500", "Home");
             }
         }
@@ -402,13 +408,14 @@ namespace HelpDesk.Web.Controllers
 
                 if (result == 0)
                 {
-                    TempData["Message"] = new ErrorVM()
+                    var errorVM = new ErrorVM()
                     {
                         Text = $"Bir hata oluştu",
                         ActionName = "RecoverPassword",
                         ControllerName = "Account",
-                        ErrorCode = 500
+                        ErrorCode = "500"
                     };
+                    TempData["ErrorMessage"] = JsonConvert.SerializeObject(errorVM);
                     return RedirectToAction("Error500", "Home");
                 }
 
@@ -419,13 +426,14 @@ namespace HelpDesk.Web.Controllers
 
             catch (Exception ex)
             {
-                TempData["Message"] = new ErrorVM()
+                var errorVM = new ErrorVM()
                 {
                     Text = $"Bir hata oluştu {ex.Message}",
                     ActionName = "RecoverPassword",
                     ControllerName = "Account",
-                    ErrorCode = 500
+                    ErrorCode = "500"
                 };
+                TempData["ErrorMessage"] = JsonConvert.SerializeObject(errorVM);
                 return RedirectToAction("Error500", "Home");
             }
             TempData["Message"] = $"{model.Email} mail adresine yeni şifre gönderildi.";
