@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Device.Location;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -12,6 +13,7 @@ using HelpDesk.Models.IdentityEntities;
 using HelpDesk.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 
 namespace HelpDesk.Web.Controllers
@@ -21,7 +23,7 @@ namespace HelpDesk.Web.Controllers
         private readonly MembershipTools _membershipTools;
         private readonly IRepository<Issue, string> _issueRepo;
         private readonly IRepository<IssueLog, string> _issueLogRepo;
-
+        List<SelectListItem> Technicians = new List<SelectListItem>();
         public OperatorController(MembershipTools membershipTools, IRepository<Issue, string> issueRepo, IRepository<IssueLog, string> issueLogRepo) : base(membershipTools, issueRepo)
         {
             _membershipTools = membershipTools;
@@ -57,7 +59,7 @@ namespace HelpDesk.Web.Controllers
         [Authorize(Roles = "Operator")]
         public async Task<ActionResult> Details(string id)
         {
-            ViewBag.TechnicianList = await GetTechnicianList();
+            //ViewBag.TechnicianList = await GetTechnicianList();
 
             var issue = _issueRepo.GetById(id);
             if (issue == null)
@@ -73,6 +75,33 @@ namespace HelpDesk.Web.Controllers
             }
 
             var data = Mapper.Map<Issue, IssueVM>(issue);
+
+            var technicians = _membershipTools.UserManager.GetUsersInRoleAsync("Technician").Result;
+
+            for (int i = 0; i < technicians.Count; i++)
+            {
+                var distance = 0.0;
+                string distanceString = "";
+                var technician = technicians[i];
+                if (technician.Latitude.HasValue && technician.Longitude.HasValue && data.Latitude.HasValue && data.Longitude.HasValue)
+                {
+                    var failureCoordinate = new GeoCoordinate(data.Latitude.Value, data.Longitude.Value);
+                    var technicianCoordinate = new GeoCoordinate(technician.Latitude.Value, technician.Longitude.Value);
+
+                    distance = failureCoordinate.GetDistanceTo(technicianCoordinate) / 1000;
+                    distanceString = $"(~{Convert.ToInt32(distance)} km)";
+                }
+
+
+                Technicians.Add(new SelectListItem()
+                {
+                    Text = technician.Name + " " + technician.Surname + " " + await _membershipTools.GetTechPoint(user.Id) + distanceString,
+                    Value = technician.Id
+                });
+
+            }
+
+            ViewBag.TechnicianList = Technicians;
 
             if (issue.OperatorId == null)
             {
