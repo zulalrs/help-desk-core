@@ -12,6 +12,7 @@ using HelpDesk.Models.IdentityEntities;
 using HelpDesk.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace HelpDesk.Web.Controllers
 {
@@ -39,13 +40,14 @@ namespace HelpDesk.Web.Controllers
             }
             catch (Exception ex)
             {
-                TempData["Message"] = new ErrorVM()
+                var errorVM = new ErrorVM()
                 {
                     Text = $"Bir hata oluştu {ex.Message}",
                     ActionName = "Index",
                     ControllerName = "Operator",
-                    ErrorCode = 500
+                    ErrorCode = "500"
                 };
+                TempData["ErrorMessage"] = JsonConvert.SerializeObject(errorVM);
                 return RedirectToAction("Error500", "Home");
             }
             return View();
@@ -111,13 +113,14 @@ namespace HelpDesk.Web.Controllers
             }
             catch (Exception ex)
             {
-                TempData["Message"] = new ErrorVM()
+                var errorVM = new ErrorVM()
                 {
                     Text = $"Bir hata oluştu {ex.Message}",
                     ActionName = "AllIssues",
                     ControllerName = "Operator",
-                    ErrorCode = 500
+                    ErrorCode = "500"
                 };
+                TempData["ErrorMessage"] = JsonConvert.SerializeObject(errorVM);
                 return RedirectToAction("Error500", "Home");
             }
             return View();
@@ -139,13 +142,14 @@ namespace HelpDesk.Web.Controllers
             }
             catch (Exception ex)
             {
-                TempData["Message"] = new ErrorVM()
+                var errorVM = new ErrorVM()
                 {
                     Text = $"Bir hata oluştu {ex.Message}",
                     ActionName = "AssignedIssues",
                     ControllerName = "Operator",
-                    ErrorCode = 500
+                    ErrorCode = "500"
                 };
+                TempData["ErrorMessage"] = JsonConvert.SerializeObject(errorVM);
                 return RedirectToAction("Error500", "Home");
             }
             return View();
@@ -154,7 +158,7 @@ namespace HelpDesk.Web.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin, Operator")]
-        public async Task<ActionResult> AssignTechAsync(IssueVM model)
+        public async Task<ActionResult> AssignTech(IssueVM model)
         {
             try
             {
@@ -186,26 +190,16 @@ namespace HelpDesk.Web.Controllers
 
                 return RedirectToAction("AllIssues", "Operator");
             }
-            //catch (DbEntityValidationException ex)
-            //{
-            //    TempData["Message"] = new ErrorVM()
-            //    {
-            //        Text = $"Bir hata oluştu: {EntityHelpers.ValidationMessage(ex)}",
-            //        ActionName = "AssignTechAsync",
-            //        ControllerName = "Operator",
-            //        ErrorCode = 500
-            //    };
-            //    return RedirectToAction("Error500", "Home");
-            //}
             catch (Exception ex)
             {
-                TempData["Message"] = new ErrorVM()
+                var errorVM = new ErrorVM()
                 {
                     Text = $"Bir hata oluştu {ex.Message}",
                     ActionName = "AssignTechAsync",
                     ControllerName = "Operator",
-                    ErrorCode = 500
+                    ErrorCode = "500"
                 };
+                TempData["ErrorMessage"] = JsonConvert.SerializeObject(errorVM);
                 return RedirectToAction("Error500", "Home");
             }
         }
