@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using HelpDesk.BLL.Account;
 using HelpDesk.BLL.Repository.Abstracts;
 using HelpDesk.BLL.Services.Senders;
@@ -12,24 +8,29 @@ using HelpDesk.Models.Models;
 using HelpDesk.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace HelpDesk.Web.Controllers
 {
-    [Authorize(Roles = "Technician")]
     public class TechnicianController : BaseController
     {
         private readonly MembershipTools _membershipTools;
         private readonly IRepository<Issue, string> _issueRepo;
         private readonly IRepository<IssueLog, string> _issueLogRepo;
         private readonly IRepository<Survey, string> _surveyRepo;
-        public TechnicianController(MembershipTools membershipTools, IRepository<Issue, string> issueRepo, IRepository<IssueLog, string> issueLogRepo, IRepository<Survey, string> surveyRepo) :base(membershipTools,issueRepo)
+        public TechnicianController(MembershipTools membershipTools, IRepository<Issue, string> issueRepo, IRepository<IssueLog, string> issueLogRepo, IRepository<Survey, string> surveyRepo) : base(membershipTools, issueRepo)
         {
             _membershipTools = membershipTools;
             _issueRepo = issueRepo;
             _issueLogRepo = issueLogRepo;
             _surveyRepo = surveyRepo;
         }
+
         [HttpGet]
+        [Authorize(Roles = "Admin, Technician")]
         public IActionResult Index()
         {
             try
@@ -43,18 +44,21 @@ namespace HelpDesk.Web.Controllers
             }
             catch (Exception ex)
             {
-                TempData["Message"] = new ErrorVM()
+                var errorVM = new ErrorVM()
                 {
                     Text = $"Bir hata oluştu. {ex.Message}",
                     ActionName = "Index",
                     ControllerName = "Technician",
-                    ErrorCode = 500
+                    ErrorCode = "500"
                 };
+                TempData["ErrorMessage"] = JsonConvert.SerializeObject(errorVM);
                 return RedirectToAction("Error500", "Home");
             }
             return View();
         }
+
         [HttpGet]
+        [Authorize(Roles = "Admin, Technician")]
         public ActionResult Details(string id)
         {
             var issue = _issueRepo.GetById(id);
@@ -104,6 +108,7 @@ namespace HelpDesk.Web.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin, Technician")]
         public ActionResult UpdateJob(IssueVM model)
         {
             try
@@ -133,18 +138,20 @@ namespace HelpDesk.Web.Controllers
             }
             catch (Exception ex)
             {
-                TempData["Message"] = new ErrorVM()
+                var errorVM = new ErrorVM()
                 {
                     Text = $"Bir hata oluştu. {ex.Message}",
                     ActionName = "UpdateJob",
                     ControllerName = "Technician",
-                    ErrorCode = 500
+                    ErrorCode = "500"
                 };
+                TempData["ErrorMessage"] = JsonConvert.SerializeObject(errorVM);
                 return RedirectToAction("Error500", "Home");
             }
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin, Technician")]
         public async Task<ActionResult> FinishJob(IssueVM model)
         {
             try
@@ -163,13 +170,13 @@ namespace HelpDesk.Web.Controllers
                 TempData["Message"] = $"{issue.Description} adlı iş tamamlandı.";
 
                 var survey = new Survey();
-                var surveyRepo =_surveyRepo;
+                var surveyRepo = _surveyRepo;
                 surveyRepo.Insert(survey);
                 issue.SurveyId = survey.Id;
                 issueRepo.Update(issue);
 
                 var user = await _membershipTools.NewUserStore().FindByIdAsync(issue.CustomerId);
-                var usernamesurname =await _membershipTools.GetNameSurname(issue.CustomerId);
+                var usernamesurname = await _membershipTools.GetNameSurname(issue.CustomerId);
 
                 var uri = new UriBuilder()
                 {
@@ -194,13 +201,14 @@ namespace HelpDesk.Web.Controllers
             }
             catch (Exception ex)
             {
-                TempData["Message"] = new ErrorVM()
+                var errorVM = new ErrorVM()
                 {
                     Text = $"Bir hata oluştu. {ex.Message}",
                     ActionName = "FinishJob",
                     ControllerName = "Technician",
-                    ErrorCode = 500
+                    ErrorCode = "500"
                 };
+                TempData["ErrorMessage"] = JsonConvert.SerializeObject(errorVM);
                 return RedirectToAction("Error500", "Home");
             }
         }

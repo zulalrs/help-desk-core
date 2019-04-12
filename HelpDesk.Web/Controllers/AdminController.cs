@@ -8,6 +8,7 @@ using HelpDesk.Models.Enums;
 using HelpDesk.Models.IdentityEntities;
 using HelpDesk.Models.Models;
 using HelpDesk.Models.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -18,6 +19,7 @@ using System.Threading.Tasks;
 
 namespace HelpDesk.Web.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class AdminController : BaseController
     {
         private readonly MembershipTools _membershipTools;
