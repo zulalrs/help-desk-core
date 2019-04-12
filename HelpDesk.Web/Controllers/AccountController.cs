@@ -28,20 +28,20 @@ namespace HelpDesk.Web.Controllers
             _membershipTools = membershipTools;
             _hostingEnvironment = hostingEnvironment;
 
-            var roleNames = Enum.GetNames(typeof(IdentityRoles));
-            foreach (var roleName in roleNames)
-            {
-                if (!_membershipTools.RoleManager.RoleExistsAsync(roleName).Result)
-                {
-                    var role = new ApplicationRole()
-                    {
-                        Name = roleName
-                    };
+            //var roleNames = Enum.GetNames(typeof(IdentityRoles));
+            //foreach (var roleName in roleNames)
+            //{
+            //    if (!_membershipTools.RoleManager.RoleExistsAsync(roleName).Result)
+            //    {
+            //        var role = new ApplicationRole()
+            //        {
+            //            Name = roleName
+            //        };
 
-                    var task = _membershipTools.RoleManager.CreateAsync(role).Result;
-                    Task.Run(() => task);
-                }
-            }
+            //        var task = _membershipTools.RoleManager.CreateAsync(role).Result;
+            //        Task.Run(() => task);
+            //    }
+            //}
         }
 
         [HttpGet]
