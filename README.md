@@ -38,4 +38,5 @@ Arıza kaydı oluşturma, teknisyen atama ve takibini yapma, müşteri memnuniye
 -   Microsoft.EntityFrameworkCore(BLL,DAL,Model,Web)
 -   Bootstrap(Web)
 
+
 ----------
